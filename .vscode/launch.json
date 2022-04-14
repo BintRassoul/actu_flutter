@@ -1,0 +1,32 @@
+{
+    // Utilisez IntelliSense pour en savoir plus sur les attributs possibles.
+    // Pointez pour afficher la description des attributs existants.
+    // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+    
+
+        {
+            "name": "my_actu",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "my_actu (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+
+      /*   {
+            "name": "actu_with_key",
+            "request": "launch",
+            "type": "dart",
+            "envArgs": [
+                "--dart-define",
+                "API_KEY=fcfd099b6ebd41b2a980e0f204e28122"
+               
+            ]
+        } */
+    ]
+}

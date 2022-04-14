@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "948758174514",
+    "project_id": "my-actu",
+    "storage_bucket": "my-actu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:948758174514:android:f912387fbe90dbfe3c152b",
+        "android_client_info": {
+          "package_name": "com.example.my_actu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "948758174514-qjefgo00tthr1fqc2sndh415e7qs3sc0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.my_actu",
+            "certificate_hash": "9e0ac0cbe7b9768fdc0f3fd9e9db1fb7524c1131"
+          }
+        },
+        {
+          "client_id": "948758174514-8nv5la4cgn796gg2dv1rsk7v2e53carm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQauiPeTn5Fkv9UEA-R_3J4avYMy5vOVQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "948758174514-8nv5la4cgn796gg2dv1rsk7v2e53carm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
