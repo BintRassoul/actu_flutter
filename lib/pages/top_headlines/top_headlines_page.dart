@@ -32,7 +32,7 @@ class TopHeadLinesPage extends StatelessWidget {
                   alignment: Alignment(-0.84, -0.3),
                   child: InkWell(
                       onTap: () {
-                        topheadlinesController.fetchArticles('general');
+                        //topheadlinesController.fetchArticles('general');
                         Get.back();
                       },
                       splashColor: secondColor,
@@ -87,8 +87,10 @@ class TopHeadLinesPage extends StatelessWidget {
                             onPressed: () {
                               topheadlinesController.isLoading.value = true;
 
-                              topheadlinesController.getArticles(sType,
-                                  topheadlinesController.categories[index]);
+                              topheadlinesController.getArticles(
+                                  sType,
+                                  topheadlinesController.categories[index],
+                                  true);
                             },
                             child: Center(
                                 child: Text(
@@ -109,8 +111,8 @@ class TopHeadLinesPage extends StatelessWidget {
                 //height: 900.0,
                 child: Obx(() {
                   if (topheadlinesController.hasInternet.value) {
-                    return loadChild(
-                        topheadlinesController, 'top', sType, Axis.vertical);
+                    return loadChild(topheadlinesController, 'top', sType, '',
+                        Axis.vertical, true);
                   }
                   return noIternet();
                 }),

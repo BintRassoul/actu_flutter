@@ -65,7 +65,8 @@ class _FavoritePageState extends State<FavoritePage> {
               padding: EdgeInsets.only(top: 5.0),
               //height: 900.0,
               child: Obx(() {
-                return loadChild(favController, 'fav', 'world', Axis.vertical);
+                return loadChild(
+                    favController, 'fav', 'world', '', Axis.vertical, true);
               }),
             ),
           ),

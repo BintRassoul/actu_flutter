@@ -13,6 +13,11 @@ class TopHeadLinesController extends GetxController {
   var afriqueArticlesList = [].obs;
   var ameriqueArticlesList = [].obs;
   var asieArticlesList = [].obs;
+  var articlesTopList = [].obs;
+  var europeArticlesTopList = [].obs;
+  var ameriqueArticlesTopList = [].obs;
+  var afriqueArticlesTopList = [].obs;
+  var asieArticlesTopList = [].obs;
   var isLoading = true.obs;
 
   RxString query = ''.obs;
@@ -52,15 +57,15 @@ class TopHeadLinesController extends GetxController {
 //-------------------------------------------------------
 
   void fetchArticles(String category) async {
-    getArticles('world', category);
-    getArticles('afrique', 'Egypte');
-    getArticles('amerique', 'USA');
-    getArticles('europe', 'France');
-    getArticles('asie', 'Arabie Saoudite');
+    getArticles('world', category, false);
+    getArticles('afrique', 'Egypte', false);
+    getArticles('amerique', 'USA', false);
+    getArticles('europe', 'France', false);
+    getArticles('asie', 'Arabie Saoudite', false);
   }
 
 //-------------------------------------------------------
-  void getArticles(String sType, String category) async {
+  void getArticles(String sType, String category, bool loadingAll) async {
     ctg.value = category;
     var articles;
     if (sType == 'world') {
@@ -86,18 +91,43 @@ class TopHeadLinesController extends GetxController {
       switch (sType) {
         case 'world':
           articlesList.value = articles;
+          if (!loadingAll) {
+            for (int i = 0; i < 5; i++) {
+              articlesTopList.add(articles[i]);
+            }
+          }
           break;
         case 'afrique':
           afriqueArticlesList.value = articles;
+          if (!loadingAll) {
+            for (int i = 0; i < 5; i++) {
+              afriqueArticlesTopList.add(articles[i]);
+            }
+          }
           break;
         case 'amerique':
           ameriqueArticlesList.value = articles;
+          if (!loadingAll) {
+            for (int i = 0; i < 5; i++) {
+              ameriqueArticlesTopList.add(articles[i]);
+            }
+          }
           break;
         case 'europe':
           europeArticlesList.value = articles;
+          if (!loadingAll) {
+            for (int i = 0; i < 5; i++) {
+              europeArticlesTopList.add(articles[i]);
+            }
+          }
           break;
         case 'asie':
           asieArticlesList.value = articles;
+          if (!loadingAll) {
+            for (int i = 0; i < 5; i++) {
+              asieArticlesTopList.add(articles[i]);
+            }
+          }
           break;
       }
 
