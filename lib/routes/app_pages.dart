@@ -9,6 +9,7 @@ import '../pages/details/datails_binding.dart';
 import '../pages/details/details_page.dart';
 import '../pages/home/home_binding.dart';
 import '../pages/logo/logo_binding.dart';
+import '../pages/logo/logo_page.dart';
 import '../pages/top_headlines/top_headlines_page.dart';
 import '../pages/top_headlines/top_headlines_binding.dart';
 import 'app_routes.dart';

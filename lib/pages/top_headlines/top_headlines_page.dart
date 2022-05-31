@@ -29,7 +29,7 @@ class TopHeadLinesPage extends StatelessWidget {
                   left: 15.0, right: 15.0, top: 45.0, bottom: 18.0),
               child: Row(children: [
                 Align(
-                  alignment: Alignment(-0.84, -0.3),
+                  alignment: Alignment.topCenter,
                   child: InkWell(
                       onTap: () {
                         //topheadlinesController.fetchArticles('general');
