@@ -14,6 +14,13 @@ class DetailsController extends GetxController {
     super.onInit();
   }
 
+  @override
+  void onClose() {
+    // called just before the Controller is deleted from memory
+    //TO DO
+    super.onClose();
+  }
+
   void colorInit() {
     if (storage.read(article.title) == null) {
       favColorIcon.value = Color.fromRGBO(57, 182, 245, 1);

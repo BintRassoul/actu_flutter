@@ -47,7 +47,7 @@ class TopHeadLinesPage extends StatelessWidget {
                   title,
                   style: TextStyle(
                     fontFamily: 'Roboto',
-                    fontSize: 25.0,
+                    fontSize: 22.0,
                     color: const Color(0xFF060606).withOpacity(0.87),
                     fontWeight: FontWeight.w600,
                   ),
