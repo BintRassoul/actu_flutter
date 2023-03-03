@@ -53,7 +53,7 @@ class ActuItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _getChild(context, article.urlToImage ?? ''),
+            _getChild(context, article.urlToImage),
 
             // ),
 

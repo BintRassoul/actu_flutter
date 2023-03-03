@@ -14,8 +14,8 @@ class TopHeadLines {
   List<Article> articles;
 
   factory TopHeadLines.fromJson(Map<String, dynamic> json) => TopHeadLines(
-        status: json["status"],
-        totalResults: json["totalResults"],
+        status: json["status"] ?? "",
+        totalResults: json["totalResults"] ?? "",
         articles: List<Article>.from(
             json["articles"].map((x) => Article.fromJson(x))),
       );
@@ -36,21 +36,21 @@ class Article {
   Source source;
   dynamic author;
   String title;
-  String? description;
+  String description;
   String url;
-  String? urlToImage;
+  String urlToImage;
   DateTime publishedAt;
-  String? content;
+  String content;
 
   factory Article.fromJson(Map<String, dynamic> json) => Article(
         source: Source.fromJson(json["source"]),
-        author: json["author"],
-        title: json["title"],
-        description: json["description"],
-        url: json["url"],
-        urlToImage: json["urlToImage"],
+        author: json["author"] ?? "",
+        title: json["title"] ?? "",
+        description: json["description"] ?? "",
+        url: json["url"] ?? "",
+        urlToImage: json["urlToImage"] ?? "",
         publishedAt: DateTime.parse(json["publishedAt"]),
-        content: json["content"],
+        content: json["content"] ?? "",
       );
 
   /*  Article.fromMap(Map<String, dynamic> map)

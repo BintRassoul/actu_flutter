@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:my_actu/constants/app_constants.dart';
 
 class SearchWidget extends StatefulWidget {
   final String text;
@@ -26,32 +28,64 @@ class _SearchWidgetState extends State<SearchWidget> {
     final style = widget.text.isEmpty ? styleHint : styleActive;
 
     return Container(
-      height: 42,
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
-        border: Border.all(color: Colors.black26),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      width: Get.width - 50,
+      height: 38.5,
+      margin: EdgeInsets.only(bottom: 20),
+      alignment: Alignment.center,
       child: TextField(
-        controller: controller,
+        // style: TextStyle(color: color),
         decoration: InputDecoration(
-          icon: Icon(Icons.search, color: style.color),
+          isDense: true,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+          hintStyle: TextStyle(
+            color: mainHexColor,
+            height: 2.80,
+            fontSize: 15,
+          ),
           suffixIcon: widget.text.isNotEmpty
               ? GestureDetector(
-                  child: Icon(Icons.close, color: style.color),
                   onTap: () {
                     controller.clear();
-                    widget.onChanged('');
-                    FocusScope.of(context).requestFocus(FocusNode());
+                    controller.value = TextEditingValue.empty;
+                    //FocusScope.of(context).requestFocus(FocusNode());
+                    setState(() {});
                   },
+                  child: Container(
+                    margin: EdgeInsets.only(top: 8, bottom: 8),
+                    height: 16.67,
+                    width: 16.67,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color:
+                            widget.text.isEmpty ? Colors.black : mainHexColor),
+                    child: Icon(
+                      Icons.close,
+                      size: 9.7,
+                      color: Colors.white,
+                    ),
+                  ),
                 )
-              : null,
+              : SizedBox.shrink(),
           hintText: widget.hintText,
-          hintStyle: style,
-          border: InputBorder.none,
+          filled: true,
+          // fillColor: mainHexColor,
+          prefixIcon: Icon(
+            Icons.manage_search_sharp,
+            size: 22,
+            color: mainHexColor,
+          ),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide.none),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(color: mainHexColor.withOpacity(0.7)),
+          ),
         ),
+        controller: controller,
+
         style: style,
         onChanged: widget.onChanged,
       ),
