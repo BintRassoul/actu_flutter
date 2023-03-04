@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_actu/pages/home/widgets/row_title.dart';
+import 'package:my_actu/pages/home/widgets/try_btn.dart';
 
 import '../constants/app_constants.dart';
 import '../pages/components/loading_overlay.dart';
@@ -8,72 +10,36 @@ import '../pages/top_headlines/top_headlines_controller.dart';
 import '../routes/app_routes.dart';
 import 'item_actu.dart';
 
-var controller;
-Widget sectionPage(GetxController c, String controllerType, String sectionType,
+Widget sectionPage(TopHeadLinesController controller, String sectionType,
     String title, Axis axe) {
+  bool isThereInternet = controller.hasInternet.value;
+
   return Padding(
     padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 20.0),
     child: Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontFamily: 'Segoe UI',
-                fontSize: 21.0,
-                color: mainHexColor.withOpacity(0.54),
-              ),
-            ),
-            Align(
-                alignment: Alignment(0.84, -0.84),
-                child: GestureDetector(
-                  onTap: () => Get.toNamed(AppRoutes.TOP_HEADLINES,
-                      arguments: [sectionType, title]),
-                  child: Text(
-                    'Voir plus',
-                    style: TextStyle(
-                      color: mainHexColor,
-                      fontSize: 12,
-                    ),
-                  ),
-                )),
-          ],
-        ),
+        rowTitle(title: title, goTo: "TOP_HEADLINES", sectionType: sectionType),
         Container(
-          // margin: EdgeInsets.only(bottom: 50.0),
-          // padding: EdgeInsets.only(top: 5.0),
-          height: 235.0,
-          child: Obx(() {
-            if (controllerType == 'fav') {
-              controller = c as FavoritesController;
-              return loadChild(
-                  controller, controllerType, sectionType, title, axe, false);
-            }
-
-            controller = c as TopHeadLinesController;
-            if (controller.hasInternet.value)
-              return loadChild(
-                  controller, controllerType, sectionType, title, axe, false);
-
-            return noIternet();
-          }),
-        ),
+            // margin: EdgeInsets.only(bottom: 50.0),
+            padding: EdgeInsets.only(top: 5.0),
+            height: isThereInternet ? 235.0 : 150,
+            child: (isThereInternet)
+                ? loadChild(controller, "top", sectionType, title, axe, false)
+                : tryButton(controller)),
       ],
     ),
   );
 }
 
-Widget loadChild(GetxController c, String cType, String sectionType,
+Widget loadChild(dynamic controller, String cType, String sectionType,
     String title, Axis axe, bool loadingAll) {
   var articles;
   var isLoading;
   if (cType == 'fav') {
-    controller = c as FavoritesController;
+    //controller = c as FavoritesController;
     isLoading = false;
   } else {
-    controller = c as TopHeadLinesController;
+    //  controller = c as TopHeadLinesController;
     isLoading = controller.isLoading.value;
   }
   // print(controller);
@@ -114,24 +80,12 @@ Widget loadChild(GetxController c, String cType, String sectionType,
         break;
     }
   }
-  if (articles.length == 5) {
+  if (loadingAll) {
     return LoadingOverlay(isLoading,
         child: ListView.builder(
             scrollDirection: axe,
-            itemCount: articles.length + 1,
+            itemCount: articles.length,
             itemBuilder: (context, index) {
-              if (index == 5) {
-                return InkWell(
-                    customBorder: CircleBorder(
-                        side: BorderSide(
-                            color: mainHexColor, style: BorderStyle.solid)),
-                    onTap: () => Get.toNamed(AppRoutes.TOP_HEADLINES,
-                        arguments: [sectionType, title]),
-                    splashColor: secondColor,
-                    borderRadius: BorderRadius.circular(32.0),
-                    child: Icon(Icons.arrow_circle_right_outlined,
-                        size: 50.0, color: iconHexColor));
-              }
               return ActuItem(
                 widthCard: widthHomeCard,
                 sizeTitle: sizeHomeTitle,
@@ -143,8 +97,20 @@ Widget loadChild(GetxController c, String cType, String sectionType,
   return LoadingOverlay(isLoading,
       child: ListView.builder(
           scrollDirection: axe,
-          itemCount: articles.length,
+          itemCount: articles.length + 1,
           itemBuilder: (context, index) {
+            if (index == 5) {
+              return InkWell(
+                  customBorder: CircleBorder(
+                      side: BorderSide(
+                          color: mainHexColor, style: BorderStyle.solid)),
+                  onTap: () => Get.toNamed(AppRoutes.TOP_HEADLINES,
+                      arguments: [sectionType, title]),
+                  splashColor: secondColor,
+                  borderRadius: BorderRadius.circular(32.0),
+                  child: Icon(Icons.double_arrow_rounded,
+                      size: 50.0, color: mainHexColor));
+            }
             return ActuItem(
               widthCard: widthHomeCard,
               sizeTitle: sizeHomeTitle,
@@ -155,7 +121,14 @@ Widget loadChild(GetxController c, String cType, String sectionType,
 }
 
 Widget noIternet() {
-  return Center(
-    child: Text('Oups!! Nous détectons un problème avec le réseau.'),
+  return Column(
+    children: [
+      Center(
+        child: Text('Oups!! Nous détectons un problème avec le réseau.'),
+      ),
+      SizedBox(
+        height: 7,
+      ),
+    ],
   );
 }

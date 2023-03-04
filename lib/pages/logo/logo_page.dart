@@ -18,15 +18,20 @@ class LogoPage extends StatelessWidget {
             Align(
                 alignment: Alignment.topCenter,
                 child: Image.asset(
-                  'assets/images/actu.png',
-                  width: 150,
+                  'assets/images/worldwide.png',
+                  width: 200,
+                  height: 200,
                 )),
+            SizedBox(
+              height: 25,
+            ),
             Expanded(
               child: const Text(
-                'ActuMonde',
+                'TopActu',
                 style: TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
+                    fontFamily: "Bruno Ace",
                     color: Colors.white),
               ),
             )

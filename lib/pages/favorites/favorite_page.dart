@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
+import 'package:my_actu/pages/home/widgets/app_bar.dart';
 
 import '../../widgets/section_page.dart';
 import '../../widgets/utils.dart';
@@ -22,9 +23,9 @@ class _FavoritePageState extends State<FavoritePage> {
       body: Column(
         children: [
 //APP_MENU
+          appBarWidget(),
           Padding(
-            padding: EdgeInsets.only(
-                left: 15.0, right: 15.0, top: 45.0, bottom: 18.0),
+            padding: EdgeInsets.all(15.0),
             child: Row(children: [
               Align(
                 alignment: Alignment(-0.84, -0.3),
@@ -35,19 +36,22 @@ class _FavoritePageState extends State<FavoritePage> {
                     },
                     splashColor: secondColor,
                     borderRadius: BorderRadius.circular(32.0),
-                    child: Icon(Icons.arrow_back_ios_rounded,
-                        size: 30.0, color: iconHexColor)),
+                    child: /* SvgPicture.asset(
+                                          "assets/svg/icon_expand_left.svg",
+                                        ) */
+                        Icon(Icons.keyboard_double_arrow_left,
+                            size: 33.0, color: blackColor)),
               ),
               SizedBox(
-                width: 13,
+                width: 8,
               ),
               Text(
                 "Mes Favoris",
                 style: TextStyle(
                   fontFamily: 'Roboto',
-                  fontSize: 25.0,
-                  color: const Color(0xFF060606).withOpacity(0.87),
-                  fontWeight: FontWeight.w600,
+                  fontSize: 24.0,
+                  color: blackColor,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ]),
@@ -55,20 +59,22 @@ class _FavoritePageState extends State<FavoritePage> {
 
           //------------------------SEARCH BAR-----------------
           buildSearch(favController, 'fav', 'world'),
-          SizedBox(
+          /*    SizedBox(
             height: 10,
-          ),
+          ), */
           //----------------------------------------
           Expanded(
-            child: Container(
-              margin: EdgeInsets.only(bottom: 50.0),
-              padding: EdgeInsets.only(top: 5.0),
-              //height: 900.0,
-              child: Obx(() {
-                return loadChild(
-                    favController, 'fav', 'world', '', Axis.vertical, true);
-              }),
-            ),
+            child: (favController.articlesList.length == 0)
+                ? Container(
+                    margin: EdgeInsets.only(top: 40.0, bottom: 50),
+                    // padding: EdgeInsets.only(top: 5.0),
+                    child: Text("Pas d'éléments dans ce dossier"))
+                : Container(
+                    margin: EdgeInsets.only(bottom: 50),
+                    // padding: EdgeInsets.only(top: 5.0),
+                    child: loadChild(
+                        favController, 'fav', 'world', '', Axis.vertical, true),
+                  ),
           ),
         ],
       ),
