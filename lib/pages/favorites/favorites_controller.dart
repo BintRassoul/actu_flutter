@@ -4,6 +4,7 @@ import 'package:my_actu/models/top_headlines.dart';
 
 class FavoritesController extends GetxController {
   var articlesList = [].obs;
+  var articlesTopList = [].obs;
   RxString query = ''.obs;
 
   @override
@@ -12,19 +13,27 @@ class FavoritesController extends GetxController {
     super.onInit();
   }
 
-  void getData() {
+  Future<List<Article>> getData() async {
     dynamic favKeys = storage.getKeys();
 
-    var listFav = [];
+    List<Article> listFav = [];
     if (favKeys != null) {
       for (String i in favKeys) {
         print(storage.read(i).toString());
 
-        final map = storage.read(i);
-        listFav.add(Article.fromJson(map));
+        final Map<String, dynamic> map = storage.read(i);
+        Article article = Article.fromJson(map);
+        // article.imageFile = await getFile(article.title);
+
+        listFav.add(article);
       }
+      listFav.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+
       this.articlesList.value = listFav;
+      this.articlesTopList.value =
+          (listFav.length < 6) ? listFav : listFav.sublist(0, 5);
       update();
     }
+    return listFav;
   }
 }

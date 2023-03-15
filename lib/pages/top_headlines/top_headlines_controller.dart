@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:my_actu/constants/app_constants.dart';
 
+import '../../models/top_headlines.dart';
 import '../../services/api_request.dart';
 
 class TopHeadLinesController extends GetxController {
@@ -33,18 +35,18 @@ class TopHeadLinesController extends GetxController {
   final ameriqueCountries =
       countriesList['amerique']?.keys.toList(growable: false);
   final asieCountries = countriesList['asie']?.keys.toList(growable: false);
+  RxBool checkingInternet = false.obs;
 
   RxBool hasInternet = false.obs;
   late StreamSubscription internetSubscription;
 
   @override
   void onInit() {
-    this.internetSubscription =
-        InternetConnectionChecker().onStatusChange.listen((status) {
-      final hasInternet = status == InternetConnectionStatus.connected;
-      this.hasInternet.value = hasInternet;
-    });
+    checkConnection();
     fetchArticles('general');
+    log('----------------fetch articles');
+    log('----------------isLoading topheadlines----' +
+        isLoading.value.toString());
     super.onInit();
   }
 //-------------------------------------------------------
@@ -58,14 +60,48 @@ class TopHeadLinesController extends GetxController {
 
   void fetchArticles(String category) async {
     getArticles('world', category, false);
+    getArticles('europe', 'France', false);
     getArticles('afrique', 'Egypte', false);
     getArticles('amerique', 'USA', false);
-    getArticles('europe', 'France', false);
     getArticles('asie', 'Arabie Saoudite', false);
   }
 
 //-------------------------------------------------------
-  void getArticles(String sType, String category, bool loadingAll) async {
+  void checkConnection() {
+    this.internetSubscription =
+        InternetConnectionChecker().onStatusChange.listen((status) {
+      final isThereConnection = status == InternetConnectionStatus.connected;
+      log('status ' + status.toString());
+      log('InternetConnectionStatus.connected ' +
+          InternetConnectionStatus.connected.toString());
+      log('isThereConnection' + isThereConnection.toString());
+
+      this.hasInternet.value = isThereConnection;
+      //log('hasInternet' + hasInternet.value.toString());
+      if (hasInternet.value) {
+        //This boolean "checkingInternet" allows us to update our state when connection is OK and keep it even connection is lost
+        //Unless the page is refresh
+        this.checkingInternet(true);
+        update();
+        // this.checkingInternet.update((value) => value = true);
+        log('checkingInternet1 ' + checkingInternet.value.toString());
+        if (articlesList.length == 0 || articlesTopList.length == 0)
+          fetchArticles('general');
+      } /* else {
+        this.checkingInternet(false);
+        update();
+        //  this.checkingInternet.update((value) => value = false);
+        log('checkingInternet2 ' + checkingInternet.value.toString());
+      } */
+      //  isLoading(false);
+
+      update();
+    });
+  }
+
+//-------------------------------------------------------
+  Future<List<Article>> getArticles(
+      String sType, String category, bool loadingAll) async {
     ctg.value = category;
     var articles;
     if (sType == 'world') {
@@ -91,48 +127,52 @@ class TopHeadLinesController extends GetxController {
       switch (sType) {
         case 'world':
           articlesList.value = articles;
-          if (!loadingAll) {
-            for (int i = 0; i < 5; i++) {
-              articlesTopList.add(articles[i]);
-            }
+          if (articlesTopList.length != 0) articlesTopList = [].obs;
+          for (int i = 0; i < 5; i++) {
+            articlesTopList.add(articles[i]);
           }
+
           break;
         case 'afrique':
           afriqueArticlesList.value = articles;
-          if (!loadingAll) {
-            for (int i = 0; i < 5; i++) {
-              afriqueArticlesTopList.add(articles[i]);
-            }
+          if (afriqueArticlesTopList.length != 0)
+            afriqueArticlesTopList = [].obs;
+
+          for (int i = 0; i < 5; i++) {
+            afriqueArticlesTopList.add(articles[i]);
           }
+
           break;
         case 'amerique':
           ameriqueArticlesList.value = articles;
-          if (!loadingAll) {
-            for (int i = 0; i < 5; i++) {
-              ameriqueArticlesTopList.add(articles[i]);
-            }
+          if (ameriqueArticlesTopList.length != 0)
+            ameriqueArticlesTopList = [].obs;
+
+          for (int i = 0; i < 5; i++) {
+            ameriqueArticlesTopList.add(articles[i]);
           }
           break;
         case 'europe':
           europeArticlesList.value = articles;
-          if (!loadingAll) {
-            for (int i = 0; i < 5; i++) {
-              europeArticlesTopList.add(articles[i]);
-            }
+          if (europeArticlesTopList.length != 0) europeArticlesTopList = [].obs;
+
+          for (int i = 0; i < 5; i++) {
+            europeArticlesTopList.add(articles[i]);
           }
           break;
         case 'asie':
           asieArticlesList.value = articles;
-          if (!loadingAll) {
-            for (int i = 0; i < 5; i++) {
-              asieArticlesTopList.add(articles[i]);
-            }
+          if (asieArticlesTopList.length != 0) asieArticlesTopList = [].obs;
+
+          for (int i = 0; i < 5; i++) {
+            asieArticlesTopList.add(articles[i]);
           }
           break;
       }
 
       update();
     }
+    return articles;
   }
 
   //---------------------------

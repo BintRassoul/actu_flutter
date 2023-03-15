@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:permission_handler/permission_handler.dart';
-
+import 'package:path_provider/path_provider.dart';
+//import 'package:permission_handler/permission_handler.dart';
 import '../models/top_headlines.dart';
+import 'package:path/path.dart' as path;
+
+import '../utils/dio_requests.dart';
 
 class ApiRequest {
   final String url;
@@ -14,16 +17,9 @@ class ApiRequest {
     required this.url,
   });
 
-  Dio _dio() {
-    // Put your authorization token here
-    return Dio(BaseOptions(headers: {
-      'Authorization': 'B ....',
-    }));
-  }
-
   Future<List<Article>> getData() async {
     try {
-      var response = await _dio().get(this.url, queryParameters: this.data);
+      var response = await dio().get(this.url, queryParameters: this.data);
 
       print(response.data.toString());
       return TopHeadLines.fromJson(response.data).articles;
@@ -33,7 +29,7 @@ class ApiRequest {
     }
   }
 
-  Future<File> getImage(String filename) async {
+  /*  Future<File> getImage(String filename) async {
     PermissionStatus _permissionStatus = await Permission.storage.status;
     if (_permissionStatus != PermissionStatus.granted) {
       PermissionStatus permissionStatus = await Permission.storage.request();
@@ -58,4 +54,5 @@ class ApiRequest {
       rethrow;
     }
   }
+ */
 }

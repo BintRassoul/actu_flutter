@@ -7,6 +7,7 @@ import 'package:my_actu/widgets/search_widget.dart';
 var controller;
 var controllerType;
 var sectionType;
+late TopHeadLinesController topHeadLinesController;
 Widget buildSearch(GetxController c, String cType, String sType) => Obx(() {
       // var controller;
       controllerType = cType;
@@ -15,6 +16,7 @@ Widget buildSearch(GetxController c, String cType, String sType) => Obx(() {
         controller = c as FavoritesController;
       else {
         controller = c as TopHeadLinesController;
+        topHeadLinesController = c;
       }
       return SearchWidget(
         text: controller.query.value,
@@ -45,16 +47,21 @@ void searchArticle(String query) {
   }
   final searchListArticles = articlesList.where((article) {
     final titleLower = article.title.toLowerCase();
-    final sourceLower = article.source.name;
-    final authorLower = article.author ?? '';
+    final sourceLower = article.source.name.toLowerCase();
+    final authorLower = article.author.toLowerCase();
     final searchLower = query.toLowerCase();
 
     return titleLower.contains(searchLower) ||
-        sourceLower.toLowerCase().contains(searchLower) ||
-        authorLower.toLowerCase().contains(searchLower);
+        sourceLower.contains(searchLower) ||
+        authorLower.contains(searchLower);
   }).toList();
 
   controller.query.value = query;
+/*   if (query == "") {
+    topHeadLinesController.isLoading.value = true;
+    topHeadLinesController.getArticles(
+        "general", topHeadLinesController.ctg.value, true);
+  } else */
   switch (sectionType) {
     case 'world':
       controller.articlesList.value = searchListArticles;

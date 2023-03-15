@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../constants/app_constants.dart';
 import '../../models/top_headlines.dart';
+import '../../utils/file_functions.dart';
 
 class DetailsController extends GetxController {
   Article article = Get.arguments;
@@ -35,22 +36,32 @@ class DetailsController extends GetxController {
         .getImage(article.urlToImage!);
     imageFile = file;
     storage.write('article.urlToImage!', imageFile); */
+
+    article.imageFile = await getFile(article.title);
     storage.write(article.title, article.toJson());
+    favColorIcon.value = Color.fromARGB(255, 231, 18, 178);
+    Get.snackbar('Favoris', "L'article est bien ajouté aux favoris");
 
     print('--------------STORE--------------');
+
     print(storage.read(article.title).toString());
     print('--------------STORE--------------');
     print('--------------STORE--------------');
     print('--------------STORE--------------');
-    favColorIcon.value = Color.fromARGB(255, 231, 18, 178);
+
+    await saveImage(article.urlToImage, article.title);
+
     update();
-    Get.snackbar('Favoris', "L'article est bien ajouté aux favoris");
   }
 
-  void removeAsFavorite() {
+  Future<void> removeAsFavorite() async {
+    if (article.imageFile != null) {
+      await removeImage(article.title);
+    }
+
     storage.remove(article.title);
     print('--------------REMOVE-STORE--------------');
-    favColorIcon.value = Color.fromRGBO(57, 182, 245, 1);
+    favColorIcon.value = mainHexColor;
     update();
     Get.snackbar('Favoris', "L'article a bien été supprimé des favoris");
   }

@@ -2,6 +2,8 @@
 //
 //     final topHeadLines = topHeadLinesFromJson(jsonString);
 
+import 'dart:io';
+
 class TopHeadLines {
   TopHeadLines({
     required this.status,
@@ -31,6 +33,7 @@ class Article {
     required this.urlToImage,
     required this.publishedAt,
     required this.content,
+    required this.imageFile,
   });
 
   Source source;
@@ -41,6 +44,7 @@ class Article {
   String urlToImage;
   DateTime publishedAt;
   String content;
+  File? imageFile;
 
   factory Article.fromJson(Map<String, dynamic> json) => Article(
         source: Source.fromJson(json["source"]),
@@ -51,6 +55,7 @@ class Article {
         urlToImage: json["urlToImage"] ?? "",
         publishedAt: DateTime.parse(json["publishedAt"]),
         content: json["content"] ?? "",
+        imageFile: null,
       );
 
   /*  Article.fromMap(Map<String, dynamic> map)
@@ -72,6 +77,7 @@ class Article {
       "urlToImage": urlToImage,
       "publishedAt": publishedAt.toIso8601String(),
       "content": content,
+      "imageFile": null,
     };
   }
 }

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
+import 'package:my_actu/pages/home/widgets/no_internet_lottie.dart';
 import 'package:my_actu/widgets/section_page.dart';
 
 import '../../widgets/utils.dart';
@@ -77,7 +78,7 @@ class TopHeadLinesPage extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(30))),
-                              primary:
+                              backgroundColor:
                                   topheadlinesController.categories[index] ==
                                           topheadlinesController.ctg.value
                                       ? topheadlinesController.color1.value
@@ -111,10 +112,17 @@ class TopHeadLinesPage extends StatelessWidget {
                 //height: 900.0,
                 child: Obx(() {
                   if (topheadlinesController.hasInternet.value) {
-                    return loadChild(topheadlinesController, 'top', sType, '',
-                        Axis.vertical, true);
+                    return loadChild(
+                        controller: topheadlinesController,
+                        isLoading: topheadlinesController.isLoading.value,
+                        articles: topHeadLinesController.articlesList.toList(),
+                        cType: "top",
+                        sectionType: '',
+                        title: title,
+                        axe: Axis.vertical,
+                        loadingAll: true);
                   }
-                  return noIternet();
+                  return lottieElements();
                 }),
               ),
             ),

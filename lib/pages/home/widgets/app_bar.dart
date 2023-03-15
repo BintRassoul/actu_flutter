@@ -12,29 +12,34 @@ Container appBarWidget() {
     decoration: BoxDecoration(
         color: mainHexColor,
         borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10))),
+            bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))),
     child: Padding(
-      padding: const EdgeInsets.only(top: 30.0),
+      padding: const EdgeInsets.only(
+        top: 30.0, // bottom: 15
+      ),
       child: Row(
+        //  crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
-            height: 15,
-            width: 15,
+            height: 23,
+            width: 14,
+            alignment: Alignment.bottomLeft,
+            // padding: EdgeInsets.only(top: ),
             child: Image.asset(
               "assets/images/worldwide.png",
-              fit: BoxFit.cover,
+              fit: BoxFit.fitWidth,
             ),
           ),
           SizedBox(
-            width: 5,
+            width: 0,
           ),
           Text(
             'TopActu',
             style: TextStyle(
                 fontSize: 24,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.normal,
                 fontFamily: "Bruno Ace",
-                color: Colors.white),
+                color: whiteColor),
           ),
         ],
       ),
