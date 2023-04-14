@@ -117,7 +117,7 @@ class TopHeadLinesPage extends StatelessWidget {
                         isLoading: topheadlinesController.isLoading.value,
                         articles: topHeadLinesController.articlesList.toList(),
                         cType: "top",
-                        sectionType: '',
+                        sectionType: sType,
                         title: title,
                         axe: Axis.vertical,
                         loadingAll: true);

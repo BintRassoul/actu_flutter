@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
 import 'package:my_actu/models/top_headlines.dart';
@@ -13,13 +15,14 @@ class FavoritesController extends GetxController {
     super.onInit();
   }
 
-  Future<List<Article>> getData() async {
+  void getData() {
     dynamic favKeys = storage.getKeys();
-
     List<Article> listFav = [];
     if (favKeys != null) {
+      log('SOME FAVS');
+
       for (String i in favKeys) {
-        print(storage.read(i).toString());
+        // log('storage.read ::::' + storage.read(i).toString());
 
         final Map<String, dynamic> map = storage.read(i);
         Article article = Article.fromJson(map);
@@ -27,13 +30,13 @@ class FavoritesController extends GetxController {
 
         listFav.add(article);
       }
-      listFav.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+      listFav.sort((a, b) => b.saveAt!.compareTo(a.saveAt!));
 
       this.articlesList.value = listFav;
       this.articlesTopList.value =
           (listFav.length < 6) ? listFav : listFav.sublist(0, 5);
       update();
-    }
-    return listFav;
+    } else
+      log('NOTHING IN FAV');
   }
 }

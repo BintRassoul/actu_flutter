@@ -8,6 +8,7 @@ import 'package:my_actu/constants/app_constants.dart';
 
 import '../../models/top_headlines.dart';
 import '../../services/api_request.dart';
+import '../../services/config_reader.dart';
 
 class TopHeadLinesController extends GetxController {
   var articlesList = [].obs;
@@ -43,7 +44,7 @@ class TopHeadLinesController extends GetxController {
   @override
   void onInit() {
     checkConnection();
-    fetchArticles('general');
+    // fetchArticles('general');
     log('----------------fetch articles');
     log('----------------isLoading topheadlines----' +
         isLoading.value.toString());
@@ -100,10 +101,12 @@ class TopHeadLinesController extends GetxController {
   }
 
 //-------------------------------------------------------
-  Future<List<Article>> getArticles(
+  Future<List> getArticles(
       String sType, String category, bool loadingAll) async {
     ctg.value = category;
     var articles;
+    String apiKey = ConfigReader.getApiKey();
+
     if (sType == 'world') {
       if (category == 'technologie') {
         category = 'technology';
@@ -112,14 +115,14 @@ class TopHeadLinesController extends GetxController {
       }
       articles = await ApiRequest(null,
               url:
-                  'https://newsapi.org/v2/top-headlines?category=$category&language=fr&apiKey=$API_KEY')
+                  'https://newsapi.org/v2/top-headlines?category=$category&language=fr&apiKey=$apiKey')
           .getData();
     } else {
       category = countriesList[sType]?[category] ?? '';
 
       articles = await ApiRequest(null,
               url:
-                  'https://newsapi.org/v2/top-headlines?country=$category&category=general&apiKey=$API_KEY')
+                  'https://newsapi.org/v2/top-headlines?country=$category&category=general&apiKey=$apiKey')
           .getData();
     }
     if (articles != null) {
@@ -131,8 +134,10 @@ class TopHeadLinesController extends GetxController {
           for (int i = 0; i < 5; i++) {
             articlesTopList.add(articles[i]);
           }
+          update();
 
-          break;
+          return loadingAll ? articles : articlesTopList.toList();
+        //break;
         case 'afrique':
           afriqueArticlesList.value = articles;
           if (afriqueArticlesTopList.length != 0)
@@ -141,8 +146,10 @@ class TopHeadLinesController extends GetxController {
           for (int i = 0; i < 5; i++) {
             afriqueArticlesTopList.add(articles[i]);
           }
+          update();
 
-          break;
+          return loadingAll ? articles : afriqueArticlesTopList.toList();
+
         case 'amerique':
           ameriqueArticlesList.value = articles;
           if (ameriqueArticlesTopList.length != 0)
@@ -151,7 +158,10 @@ class TopHeadLinesController extends GetxController {
           for (int i = 0; i < 5; i++) {
             ameriqueArticlesTopList.add(articles[i]);
           }
-          break;
+          update();
+
+          return loadingAll ? articles : ameriqueArticlesTopList.toList();
+
         case 'europe':
           europeArticlesList.value = articles;
           if (europeArticlesTopList.length != 0) europeArticlesTopList = [].obs;
@@ -159,7 +169,10 @@ class TopHeadLinesController extends GetxController {
           for (int i = 0; i < 5; i++) {
             europeArticlesTopList.add(articles[i]);
           }
-          break;
+          update();
+
+          return loadingAll ? articles : europeArticlesTopList.toList();
+
         case 'asie':
           asieArticlesList.value = articles;
           if (asieArticlesTopList.length != 0) asieArticlesTopList = [].obs;
@@ -167,10 +180,10 @@ class TopHeadLinesController extends GetxController {
           for (int i = 0; i < 5; i++) {
             asieArticlesTopList.add(articles[i]);
           }
-          break;
-      }
+          update();
 
-      update();
+          return loadingAll ? articles : asieArticlesTopList.toList();
+      }
     }
     return articles;
   }

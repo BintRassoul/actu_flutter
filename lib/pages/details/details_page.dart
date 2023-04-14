@@ -48,8 +48,62 @@ class _DetailPageState extends State<DetailPage> {
       body: Column(
         children: [
 //APP_MENU
-          (article.imageFile != null)
-              ? Stack(
+          (article.imageFile == null)
+              ? (article.urlToImage == '')
+                  ? Stack(
+                      children: [
+                        Container(
+                          width: Get.width,
+                          height: .455 * Get.height,
+                          decoration: BoxDecoration(
+                              color: mainHexColor,
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(40.0),
+                                  bottomRight: Radius.circular(40.0))),
+                          child: Image.asset(
+                            'assets/images/worldwide.png',
+                            width: .27 * width,
+                            height: .13 * height,
+                            //fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                            top: 0.025 * height,
+                            child: rowIcons(detailsController)),
+                      ],
+                    )
+                  : Container(
+                      width: Get.width,
+                      color: Colors.white,
+                      child: CachedNetworkImage(
+                        // fit: BoxFit.cover,
+                        cacheManager: CacheManager(Config(
+                          article.urlToImage,
+                          // stalePeriod: const Duration(days: 364),
+                        )),
+                        imageUrl: article.urlToImage,
+                        width: Get.width,
+                        imageBuilder: (context, imageProvider) => Container(
+                          height: 350.0,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(40.0),
+                                  bottomRight: Radius.circular(40.0)),
+                              image: DecorationImage(
+                                onError: (exception, stackTrace) =>
+                                    new Icon(Icons.error_outline),
+                                image: imageProvider,
+                                fit: BoxFit.cover,
+                              )),
+                          child: rowIcons(detailsController),
+                        ),
+                        placeholder: (context, urlToImage) =>
+                            Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, urlToImage, error) =>
+                            new Icon(Icons.error),
+                      ),
+                    )
+              : Stack(
                   children: [
                     Container(
                       width: Get.width,
@@ -66,39 +120,7 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                     rowIcons(detailsController),
                   ],
-                )
-              : Container(
-                  width: Get.width,
-                  color: Colors.white,
-                  child: CachedNetworkImage(
-                    // fit: BoxFit.cover,
-                    cacheManager: CacheManager(Config(
-                      article.urlToImage,
-                      // stalePeriod: const Duration(days: 364),
-                    )),
-                    imageUrl: article.urlToImage,
-                    width: Get.width,
-                    imageBuilder: (context, imageProvider) => Container(
-                      height: 350.0,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(40.0),
-                              bottomRight: Radius.circular(40.0)),
-                          image: DecorationImage(
-                            onError: (exception, stackTrace) =>
-                                new Icon(Icons.error_outline),
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          )),
-                      child: rowIcons(detailsController),
-                    ),
-                    placeholder: (context, urlToImage) =>
-                        Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, urlToImage, error) =>
-                        new Icon(Icons.error_outline),
-                  ),
                 ),
-
           Container(
             height: 140.0,
             width: double.infinity,
@@ -108,32 +130,29 @@ class _DetailPageState extends State<DetailPage> {
                     bottomLeft: Radius.circular(40.0),
                     bottomRight: Radius.circular(40.0))),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    height: 100,
-                    padding: EdgeInsets.only(left: 30, top: 20, right: 10),
-                    child: Text(
-                      article.title,
-                      maxLines: 5,
-                      textScaleFactor: 1.5,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color.fromRGBO(19, 33, 70, 1),
-                        fontWeight: FontWeight.bold,
-                      ),
+                Container(
+                  height: 100,
+                  //color: blackColor,
+                  padding: EdgeInsets.only(left: 30, top: 10, right: 10),
+                  child: Text(
+                    article.title,
+                    maxLines: 5,
+                    textScaleFactor: 1.5,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Color.fromRGBO(19, 33, 70, 1),
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                      padding: EdgeInsets.only(
-                          left: 40, top: 8, right: 40, bottom: 10),
-                      child: Text('Publié le : ${article.publishedAt}')),
-                )
+                Container(
+                    padding: EdgeInsets.only(
+                        left: 30, top: 8, right: 40, bottom: 10),
+                    child: Text('Publié le : ${article.publishedAt}'))
               ],
             ),
           ),
@@ -174,31 +193,83 @@ class _DetailPageState extends State<DetailPage> {
 
   Padding rowIcons(DetailsController detailsController) {
     return Padding(
-      padding: EdgeInsets.only(left: 15, right: 15, top: .025 * height),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Align(
-            alignment: Alignment(-0.84, -0.84),
-            child: Container(
-              //   margin: EdgeInsets.only(left: 15),
-              width: 40,
-              height: 40,
-              decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(40.0)),
-              child: RawMaterialButton(
-                onPressed: () {
-                  //favController.getData();
-                  final FavoritesController favController =
-                      Get.find<FavoritesController>();
+      padding: EdgeInsets.only(top: .04 * height),
+      child: Container(
+        //color: blackColor,
+        width: width,
+        height: 50,
+        alignment: Alignment.center,
+        child: Stack(
+          //crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            /* Align(
+                alignment: Alignment(-0.84, -0.84), */
+            Positioned(
+                left: 0.0,
+                child: RawMaterialButton(
+                  onPressed: () {
+                    //favController.getData();
+                    final FavoritesController favController =
+                        Get.find<FavoritesController>();
 
-                  favController.onInit();
-                  Get.back();
+                    favController.onInit();
+                    Get.back();
+                  },
+                  shape: new CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.white,
+                  padding: const EdgeInsets.all(5.0),
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: mainHexColor,
+                    size: 30.0,
+                  ),
+                )),
+            /*   Align(
+              alignment: Alignment(0.84, -0.84),
+              child: */
+            Positioned(
+              right: 55,
+              child: Obx(() {
+                return RawMaterialButton(
+                  onPressed: () {
+                    if (storage.read(article.title) == null) {
+                      final TopHeadLinesController topHeadLinesController =
+                          Get.find<TopHeadLinesController>();
+                      if (topHeadLinesController.hasInternet.value)
+                        detailsController.saveAsFavorite();
+                      else
+                        Get.snackbar('Favoris',
+                            "Oups! Impossible, la connexion ne passe pas",
+                            backgroundColor: Colors.redAccent,
+                            colorText: whiteColor);
+                    } else {
+                      detailsController.removeAsFavorite();
+                    }
+                  },
+                  child: new Icon(
+                    Icons.favorite,
+                    color: detailsController.favColorIcon.value,
+                    size: 30.0,
+                  ),
+                  shape: new CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.white,
+                  padding: const EdgeInsets.all(5.0),
+                );
+              }),
+            ),
+            Positioned(
+              right: 0.0,
+              child: RawMaterialButton(
+                onPressed: () async {
+                  final urlPreview = article.url;
+                  await Share.share("Top News : $urlPreview");
                 },
                 child: new Icon(
-                  Icons.arrow_back,
-                  color: Color.fromRGBO(57, 182, 245, 1),
+                  Icons.share,
+                  color: mainHexColor,
                   size: 30.0,
                 ),
                 shape: new CircleBorder(),
@@ -207,72 +278,9 @@ class _DetailPageState extends State<DetailPage> {
                 padding: const EdgeInsets.all(5.0),
               ),
             ),
-          ),
-          Align(
-            alignment: Alignment(0.84, -0.84),
-            child: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(right: 15),
-                  width: 40,
-                  height: 40,
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(40.0)),
-                  child: Obx(() {
-                    return RawMaterialButton(
-                      onPressed: () {
-                        if (storage.read(article.title) == null) {
-                          final TopHeadLinesController topHeadLinesController =
-                              Get.find<TopHeadLinesController>();
-                          if (topHeadLinesController.hasInternet.value)
-                            detailsController.saveAsFavorite();
-                          else
-                            Get.snackbar('Favoris',
-                                "Oups! Impossible, la connexion ne passe pas",
-                                backgroundColor: Colors.redAccent,
-                                colorText: whiteColor);
-                        } else {
-                          detailsController.removeAsFavorite();
-                        }
-                      },
-                      child: new Icon(
-                        Icons.favorite,
-                        color: detailsController.favColorIcon.value,
-                        size: 30.0,
-                      ),
-                      shape: new CircleBorder(),
-                      elevation: 2.0,
-                      fillColor: Colors.white,
-                      padding: const EdgeInsets.all(5.0),
-                    );
-                  }),
-                ),
-                Container(
-                  // margin: EdgeInsets.only(right: 10),
-                  width: 40,
-                  height: 40,
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(40.0)),
-                  child: RawMaterialButton(
-                    onPressed: () async {
-                      final urlPreview = article.url;
-                      await Share.share("Top News : $urlPreview");
-                    },
-                    child: new Icon(
-                      Icons.share,
-                      color: Color.fromRGBO(57, 182, 245, 1),
-                      size: 30.0,
-                    ),
-                    shape: new CircleBorder(),
-                    elevation: 2.0,
-                    fillColor: Colors.white,
-                    padding: const EdgeInsets.all(5.0),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
+            // )
+          ],
+        ),
       ),
     );
   }

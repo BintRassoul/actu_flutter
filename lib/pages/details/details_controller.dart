@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -7,7 +10,7 @@ import '../../utils/file_functions.dart';
 
 class DetailsController extends GetxController {
   Article article = Get.arguments;
-  Rx<Color> favColorIcon = Color.fromRGBO(57, 182, 245, 1).obs;
+  Rx<Color> favColorIcon = mainHexColor.obs;
   // var imageFile;
   @override
   void onInit() {
@@ -24,9 +27,9 @@ class DetailsController extends GetxController {
 
   void colorInit() {
     if (storage.read(article.title) == null) {
-      favColorIcon.value = Color.fromRGBO(57, 182, 245, 1);
+      favColorIcon.value = mainHexColor;
     } else {
-      favColorIcon.value = Color.fromARGB(255, 231, 18, 178);
+      favColorIcon.value = redColor;
     }
     update();
   }
@@ -37,19 +40,30 @@ class DetailsController extends GetxController {
     imageFile = file;
     storage.write('article.urlToImage!', imageFile); */
 
-    article.imageFile = await getFile(article.title);
+    if (article.urlToImage == '')
+      article.imageFile = null;
+    else {
+      File? file = await saveImage(article.urlToImage, article.title);
+      article.imageFile = file!;
+    }
+    log('imageFile  ' + article.imageFile.toString());
+    //save date for
+    article.saveAt = DateTime.now().millisecondsSinceEpoch;
+
+    // update();
+
+    // article.imageFile = await getFile(article.title);
     storage.write(article.title, article.toJson());
-    favColorIcon.value = Color.fromARGB(255, 231, 18, 178);
+
+    favColorIcon.value = redColor;
     Get.snackbar('Favoris', "L'article est bien ajouté aux favoris");
 
     print('--------------STORE--------------');
 
     print(storage.read(article.title).toString());
+    print('--------------STORE ');
+    print('--------------STORE ');
     print('--------------STORE--------------');
-    print('--------------STORE--------------');
-    print('--------------STORE--------------');
-
-    await saveImage(article.urlToImage, article.title);
 
     update();
   }

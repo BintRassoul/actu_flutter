@@ -14,13 +14,14 @@ Future<File>? getFile(String fileName) async {
   return file;
 }
 
-Future<void> saveImage(String url, String fileName) async {
+Future<File?> saveImage(String url, String fileName) async {
   var response = await dio().get(url,
       queryParameters: null,
       options: Options(responseType: ResponseType.bytes));
   File? file = await getFile(fileName);
 
   await file!.writeAsBytes(response.data);
+  return file;
 }
 
 Future<void> removeImage(String fileName) async {

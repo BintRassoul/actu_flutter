@@ -24,17 +24,17 @@ class TopHeadLines {
 }
 
 class Article {
-  Article({
-    required this.source,
-    required this.author,
-    required this.title,
-    required this.description,
-    required this.url,
-    required this.urlToImage,
-    required this.publishedAt,
-    required this.content,
-    required this.imageFile,
-  });
+  Article(
+      {required this.source,
+      required this.author,
+      required this.title,
+      required this.description,
+      required this.url,
+      required this.urlToImage,
+      required this.publishedAt,
+      required this.content,
+      required this.imageFile,
+      required this.saveAt});
 
   Source source;
   dynamic author;
@@ -45,6 +45,7 @@ class Article {
   DateTime publishedAt;
   String content;
   File? imageFile;
+  int? saveAt;
 
   factory Article.fromJson(Map<String, dynamic> json) => Article(
         source: Source.fromJson(json["source"]),
@@ -55,7 +56,8 @@ class Article {
         urlToImage: json["urlToImage"] ?? "",
         publishedAt: DateTime.parse(json["publishedAt"]),
         content: json["content"] ?? "",
-        imageFile: null,
+        imageFile: json["imageFile"] ?? null,
+        saveAt: json["saveAt"] ?? null,
       );
 
   /*  Article.fromMap(Map<String, dynamic> map)
@@ -77,7 +79,8 @@ class Article {
       "urlToImage": urlToImage,
       "publishedAt": publishedAt.toIso8601String(),
       "content": content,
-      "imageFile": null,
+      "imageFile": imageFile,
+      "saveAt": saveAt,
     };
   }
 }

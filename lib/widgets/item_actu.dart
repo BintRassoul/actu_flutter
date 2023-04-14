@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -98,7 +99,7 @@ class ActuItem extends StatelessWidget {
 
   _getChild({required BuildContext context, required String urlToImage}) {
     //  getDirectory();
-
+    // log(" article.urlToImage,   " + article.urlToImage);
     return Flexible(
         fit: FlexFit.loose,
         child: Container(
@@ -125,7 +126,7 @@ class FavActuItem extends StatelessWidget {
   final double widthCard;
   final double sizeTitle;
   final double sizeLink;
-  final File file;
+  final File? file;
   final Article article;
 
   //late Directory _appDocsDir;
@@ -160,10 +161,27 @@ class FavActuItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: Get.width,
-              height: 250,
-              child: Image.file(file),
+            Flexible(
+              fit: FlexFit.loose,
+              child: Container(
+                width: Get.width,
+                height: 250,
+                child: file == null
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset(
+                          'assets/images/worldwide.png',
+                          width: .27 * width,
+                          height: .13 * height,
+                          color: mainHexColor,
+                          //fit: BoxFit.cover,
+                        ),
+                      )
+                    : Image.file(
+                        file!,
+                        fit: BoxFit.cover,
+                      ),
+              ),
             ),
             SizedBox(
               height: 7.0,

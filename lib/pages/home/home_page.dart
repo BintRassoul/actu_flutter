@@ -91,25 +91,41 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     rowTitle(title: 'Mes Favoris', goTo: "FAVORITES"),
                     Obx(() {
-                      return (favController.articlesList.length != 0)
+                      return (favController.articlesTopList.length != 0)
                           ? Container(
                               padding: EdgeInsets.only(top: 5.0),
                               //color: Colors.amber,
+                              width: width,
                               height: 235,
-                              child: ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: favController.articlesList.length,
-                                  itemBuilder: (context, index) {
-                                    //   log('ELEMENT : ${topheadlinesController.articlesList[index]} &&&&&&&  ${topheadlinesController.articlesList[index].title}');
-                                    print(favController.articlesList.length);
-                                    return ActuItem(
-                                      widthCard: widthHomeCard,
-                                      sizeTitle: sizeHomeTitle,
-                                      sizeLink: sizeHomeLink,
-                                      article:
-                                          favController.articlesList[index],
-                                    );
-                                  }))
+                              child: loadChild(
+                                  controller: favController,
+                                  isLoading: false,
+                                  cType: "fav",
+                                  sectionType: 'world',
+                                  title: "",
+                                  articles: favController.articlesTopList,
+                                  axe: Axis.horizontal,
+                                  loadingAll:
+                                      favController.articlesList.length < 6
+                                          ? true
+                                          : false)
+                              /*   ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount:
+                                          favController.articlesTopList.length,
+                                      itemBuilder: (context, index) {
+                                        //   log('ELEMENT : ${topheadlinesController.articlesList[index]} &&&&&&&  ${topheadlinesController.articlesList[index].title}');
+                                        print(
+                                            favController.articlesList.length);
+                                        return ActuItem(
+                                          widthCard: widthHomeCard,
+                                          sizeTitle: sizeHomeTitle,
+                                          sizeLink: sizeHomeLink,
+                                          article:
+                                              favController.articlesList[index],
+                                        );
+                                      }) */
+                              )
                           : Container(
                               padding: EdgeInsets.only(top: 5.0),
                               //color: Colors.amber,
@@ -130,9 +146,6 @@ class _HomePageState extends State<HomePage> {
                                     sectionType: 'world',
                                     title: "L'actualité dans le monde",
                                     category: 'general',
-                                    topArticles: topheadlinesController
-                                        .articlesTopList
-                                        .toList(),
                                     axe: Axis.horizontal,
                                     isLoading: isLoading),
                                 sectionPage(
@@ -140,34 +153,22 @@ class _HomePageState extends State<HomePage> {
                                     title: "En Europe",
                                     category: 'France',
                                     axe: Axis.horizontal,
-                                    topArticles: topheadlinesController
-                                        .europeArticlesTopList
-                                        .toList(),
                                     isLoading: isLoading),
                                 sectionPage(
                                     sectionType: 'afrique',
                                     title: "En Afrique",
                                     category: 'Egypte',
                                     axe: Axis.horizontal,
-                                    topArticles: topheadlinesController
-                                        .afriqueArticlesTopList
-                                        .toList(),
                                     isLoading: isLoading),
                                 sectionPage(
                                     sectionType: 'amerique',
                                     title: "En Amérique",
-                                    topArticles: topheadlinesController
-                                        .ameriqueArticlesTopList
-                                        .toList(),
                                     category: 'USA',
                                     axe: Axis.horizontal,
                                     isLoading: isLoading),
                                 sectionPage(
                                     sectionType: 'asie',
                                     title: "En Asie",
-                                    topArticles: topheadlinesController
-                                        .asieArticlesTopList
-                                        .toList(),
                                     category: 'Arabie Saoudite',
                                     axe: Axis.horizontal,
                                     isLoading: isLoading),

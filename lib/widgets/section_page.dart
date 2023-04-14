@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:my_actu/models/top_headlines.dart';
 import 'package:my_actu/pages/home/widgets/no_internet_lottie.dart';
 import 'package:my_actu/pages/home/widgets/row_title.dart';
+import 'package:my_actu/widgets/shimmer_item_actu.dart';
 
 import '../constants/app_constants.dart';
 import '../pages/components/loading_overlay.dart';
@@ -21,7 +22,6 @@ Widget sectionPage(
     {required String sectionType,
     required bool isLoading,
     required String title,
-    required List topArticles,
     required String category,
     required Axis axe}) {
   // bool isThereInternet = controller.hasInternet.value;
@@ -35,16 +35,7 @@ Widget sectionPage(
             // margin: EdgeInsets.only(bottom: 50.0),
             padding: EdgeInsets.only(top: 5.0),
             height: 235.0,
-            child: loadChild(
-                controller: topheadlinesController,
-                isLoading: false,
-                cType: "top",
-                articles: topArticles,
-                sectionType: sectionType,
-                title: title,
-                axe: axe,
-                loadingAll:
-                    false) /* FutureBuilder(
+            child: FutureBuilder(
                 future: topheadlinesController.getArticles(
                     sectionType, category, false),
                 builder: (context, snapshot) {
@@ -53,18 +44,17 @@ Widget sectionPage(
                         controller: topheadlinesController,
                         isLoading: false,
                         cType: "top",
-                        articles: topArticles,
+                        articles: snapshot.data as List,
                         sectionType: sectionType,
                         title: title,
                         axe: axe,
                         loadingAll: false);
                   } else if (snapshot.connectionState ==
                       ConnectionState.waiting)
-                    return custumizedProgressIndicator();
+                    return shimmerActuItem(widthHomeCard);
                   return SizedBox
                       .shrink(); //noInternetSection(); // In the fututre, replace it by a problemWidget
-                }) */
-            )
+                }))
       ],
     ),
   );
@@ -94,26 +84,27 @@ Widget loadChild(
   else {
     controller = controller as TopHeadLinesController;
     // isLoading = controller.isLoading.value;
+    var newArticles;
     if (loadingAll) {
-      /*  switch (sectionType) {
+      switch (sectionType) {
         case 'world':
-          articles = controller.articlesList;
+          newArticles = controller.articlesList;
           break;
         case 'afrique':
-          articles = controller.afriqueArticlesList;
+          newArticles = controller.afriqueArticlesList;
           break;
         case 'amerique':
-          articles = controller.ameriqueArticlesList;
+          newArticles = controller.ameriqueArticlesList;
           break;
         case 'europe':
-          articles = controller.europeArticlesList;
+          newArticles = controller.europeArticlesList;
           break;
         case 'asie':
-          articles = controller.asieArticlesList;
+          newArticles = controller.asieArticlesList;
           break;
       }
-      articles = articles.value;
- */
+      articles = newArticles.value;
+
       return displayAllTopItems(isLoading, axe, articles);
     } else {
       /*    RxList topArticle = [].obs;
@@ -147,22 +138,18 @@ LoadingOverlay displalTopFavItems(bool isLoading, Axis axe, List articles) {
           scrollDirection: axe,
           itemCount: articles.length + 1,
           itemBuilder: (context, index) {
+            //Index staarts o partir e°
             if (index == 5) {
-              return CircleAvatar(
-                backgroundColor: mainHexColor,
-                radius: 33,
-                child: Icon(Icons.double_arrow_rounded,
-                    size: 50.0, color: whiteColor),
-              );
-              /*          return InkWell(
-                  customBorder: CircleBorder(
-                      side: BorderSide(
-                          color: mainHexColor, style: BorderStyle.solid)),
-                  onTap: () => Get.toNamed(AppRoutes.FAVORITES),
-                  splashColor: secondColor,
-                  borderRadius: BorderRadius.circular(32.0),
+              return GestureDetector(
+                onTap: () =>
+                    Get.toNamed(AppRoutes.FAVORITES, arguments: ['world', '']),
+                child: CircleAvatar(
+                  backgroundColor: mainHexColor,
+                  radius: 20,
                   child: Icon(Icons.double_arrow_rounded,
-                      size: 50.0, color: mainHexColor)); */
+                      size: 24.0, color: whiteColor),
+                ),
+              );
             }
             return FavActuItem(
               widthCard: widthHomeCard,
@@ -185,7 +172,7 @@ LoadingOverlay displayAllFavItems(bool isLoading, Axis axe, List articles) {
               sizeTitle: sizeHomeTitle,
               sizeLink: sizeHomeLink,
               article: articles[index],
-              file: articles[index].imageFile!,
+              file: articles[index].imageFile,
             );
           }));
 }
@@ -216,16 +203,16 @@ LoadingOverlay displayFiveTopItems(bool isLoading, Axis axe,
           itemCount: articles.length + 1,
           itemBuilder: (context, index) {
             if (index == 5) {
-              return InkWell(
-                  customBorder: CircleBorder(
-                      side: BorderSide(
-                          color: mainHexColor, style: BorderStyle.solid)),
-                  onTap: () => Get.toNamed(AppRoutes.TOP_HEADLINES,
-                      arguments: [sectionType, title]),
-                  splashColor: secondColor,
-                  borderRadius: BorderRadius.circular(32.0),
+              return GestureDetector(
+                onTap: () => Get.toNamed(AppRoutes.TOP_HEADLINES,
+                    arguments: [sectionType, title]),
+                child: CircleAvatar(
+                  backgroundColor: mainHexColor,
+                  radius: 20,
                   child: Icon(Icons.double_arrow_rounded,
-                      size: 50.0, color: mainHexColor));
+                      size: 24.0, color: whiteColor),
+                ),
+              );
             }
             return ActuItem(
               widthCard: widthHomeCard,
