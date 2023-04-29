@@ -2,18 +2,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:my_actu/models/top_headlines.dart';
-import 'package:my_actu/pages/home/widgets/no_internet_lottie.dart';
 import 'package:my_actu/pages/home/widgets/row_title.dart';
 import 'package:my_actu/widgets/shimmer_item_actu.dart';
 
 import '../constants/app_constants.dart';
 import '../pages/components/loading_overlay.dart';
 import '../pages/favorites/favorites_controller.dart';
-import '../pages/home/widgets/try_btn.dart';
 import '../pages/top_headlines/top_headlines_controller.dart';
 import '../routes/app_routes.dart';
-import 'customized_progress_indicator.dart';
 import 'item_actu.dart';
 
 final TopHeadLinesController topheadlinesController =
@@ -25,7 +21,6 @@ Widget sectionPage(
     required String category,
     required Axis axe}) {
   // bool isThereInternet = controller.hasInternet.value;
-
   return Padding(
     padding: EdgeInsets.only(top: 20.0),
     child: Column(
@@ -70,6 +65,8 @@ Widget loadChild(
     required Axis axe,
     required bool loadingAll}) {
   // articles = articles as List<Article>;
+  print('-------- Section Page  :  ' + sectionType);
+
   if (cType == 'fav') {
     controller = controller as FavoritesController;
     if (loadingAll) {

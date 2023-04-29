@@ -2,7 +2,13 @@
 //
 //     final topHeadLines = topHeadLinesFromJson(jsonString);
 
+import 'dart:convert';
 import 'dart:io';
+
+TopHeadLines topHeadLinesFromJson(String str) =>
+    TopHeadLines.fromJson(json.decode(str));
+
+String topHeadLinesToJson(TopHeadLines data) => json.encode(data.toJson());
 
 class TopHeadLines {
   TopHeadLines({
@@ -21,6 +27,12 @@ class TopHeadLines {
         articles: List<Article>.from(
             json["articles"].map((x) => Article.fromJson(x))),
       );
+
+  Map<String, dynamic> toJson() => {
+        "status": status,
+        "totalResults": totalResults,
+        "articles": List<Article>.from(articles.map((x) => x.toJson())),
+      };
 }
 
 class Article {

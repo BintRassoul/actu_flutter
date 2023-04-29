@@ -64,7 +64,7 @@ class TopHeadLinesController extends GetxController {
     getArticles('europe', 'France', false);
     getArticles('afrique', 'Egypte', false);
     getArticles('amerique', 'USA', false);
-    getArticles('asie', 'Arabie Saoudite', false);
+    getArticles('asie', 'Chine', false);
   }
 
 //-------------------------------------------------------
@@ -86,8 +86,9 @@ class TopHeadLinesController extends GetxController {
         update();
         // this.checkingInternet.update((value) => value = true);
         log('checkingInternet1 ' + checkingInternet.value.toString());
-        if (articlesList.length == 0 || articlesTopList.length == 0)
-          fetchArticles('general');
+
+        /*   if (articlesList.length == 0 || articlesTopList.length == 0)
+          fetchArticles('general'); */
       } /* else {
         this.checkingInternet(false);
         update();
@@ -113,17 +114,16 @@ class TopHeadLinesController extends GetxController {
       } else if (category == 'sante') {
         category = 'health';
       }
-      articles = await ApiRequest(null,
-              url:
-                  'https://newsapi.org/v2/top-headlines?category=$category&language=fr&apiKey=$apiKey')
-          .getData();
+      articles = await ApiRequest.fetchAlbum(
+          'https://newsapi.org/v2/top-headlines?category=$category&language=fr&apiKey=$apiKey');
+      //  "http://api.mediastack.com/v1/news?access_key=$apiKey&categories=$category");
     } else {
       category = countriesList[sType]?[category] ?? '';
 
-      articles = await ApiRequest(null,
-              url:
-                  'https://newsapi.org/v2/top-headlines?country=$category&category=general&apiKey=$apiKey')
-          .getData();
+      articles = await ApiRequest.fetchAlbum(
+          // "http://api.mediastack.com/v1/news?access_key=$apiKey&countries=$category"); /* await ApiRequest(null,
+
+          'https://newsapi.org/v2/top-headlines?country=$category&category=general&apiKey=$apiKey');
     }
     if (articles != null) {
       isLoading(false);
