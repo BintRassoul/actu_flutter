@@ -11,7 +11,7 @@ abstract class ConfigReader {
   }
 
   static String getApiKey() {
-    log(_config['api_key'] as String);
-    return _config['api_key'] as String;
+    log(_config['api_key_bing'] as String);
+    return _config['api_key_bing'] as String;
   }
 }

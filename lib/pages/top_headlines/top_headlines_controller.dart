@@ -115,15 +115,14 @@ class TopHeadLinesController extends GetxController {
         category = 'health';
       }
       articles = await ApiRequest.fetchAlbum(
-          'https://newsapi.org/v2/top-headlines?category=$category&language=fr&apiKey=$apiKey');
-      //  "http://api.mediastack.com/v1/news?access_key=$apiKey&categories=$category");
+          'https://api.bing.microsoft.com/v7.0/news/search?q=monde+actualités&mkt=en-AU&setLang=en-AU&freshness=Month&originalImg=true&count=100',
+          {"Ocp-Apim-Subscription-Key": apiKey});
     } else {
       category = countriesList[sType]?[category] ?? '';
 
       articles = await ApiRequest.fetchAlbum(
-          // "http://api.mediastack.com/v1/news?access_key=$apiKey&countries=$category"); /* await ApiRequest(null,
-
-          'https://newsapi.org/v2/top-headlines?country=$category&category=general&apiKey=$apiKey');
+          'https://api.bing.microsoft.com/v7.0/news/search?q=$sType&freshness=Month&count=100',
+          {"Ocp-Apim-Subscription-Key": apiKey});
     }
     if (articles != null) {
       isLoading(false);

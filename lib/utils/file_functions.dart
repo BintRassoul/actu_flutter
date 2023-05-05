@@ -5,8 +5,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
 
-import 'dio_requests.dart';
-
 Future<File>? getFile(String fileName) async {
   Directory docDirectory = await getApplicationDocumentsDirectory();
   File? file = File(path.join(docDirectory.path, path.basename(fileName)));

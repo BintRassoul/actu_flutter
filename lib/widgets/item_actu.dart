@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
-import 'package:my_actu/models/top_headlines.dart';
 import 'package:my_actu/routes/app_routes.dart';
 
+import '../models/bing_news_model.dart' as bnm;
 import 'customized_progress_indicator.dart';
 
 class ActuItem extends StatelessWidget {
@@ -16,7 +16,7 @@ class ActuItem extends StatelessWidget {
   final double sizeTitle;
   final double sizeLink;
 
-  final Article article;
+  final bnm.Value article;
 
   //late Directory _appDocsDir;
   //String path = '';
@@ -58,7 +58,11 @@ class ActuItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _getChild(context: context, urlToImage: article.urlToImage),
+            _getChild(
+                context: context,
+                urlToImage: article.image == null
+                    ? ""
+                    : article.image!.thumbnail.contentUrl),
 
             // ),
 
@@ -72,7 +76,7 @@ class ActuItem extends StatelessWidget {
                 right: 10.0,
               ),
               child: Text(
-                article.title,
+                article.name,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -97,29 +101,44 @@ class ActuItem extends StatelessWidget {
     );
   }
 
-  _getChild({required BuildContext context, required String urlToImage}) {
+  _getChild({required BuildContext context, required String? urlToImage}) {
     //  getDirectory();
     // log(" article.urlToImage,   " + article.urlToImage);
-    return Flexible(
-        fit: FlexFit.loose,
-        child: Container(
-            width: Get.width,
-            height: 250,
+    return urlToImage == null
+        ? imageContainer(
+            child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              'assets/images/worldwide.png',
+              width: .27 * width,
+              height: .13 * height,
+              color: mainHexColor,
+              //fit: BoxFit.cover,
+            ),
+          ))
+        : imageContainer(
             child: CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: urlToImage,
-              width: Get.width,
-              cacheManager: CacheManager(Config(
-                urlToImage,
-                stalePeriod: const Duration(days: 364),
-                //one week cache period
-              )),
-              placeholder: (context, urlToImage) =>
-                  custumizedProgressIndicator(),
-              errorWidget: (context, urlToImage, error) =>
-                  new Icon(Icons.error_outline),
-            )));
+            fit: BoxFit.cover,
+            imageUrl: urlToImage,
+            filterQuality: FilterQuality.high,
+            width: Get.width,
+            cacheManager: CacheManager(Config(
+              urlToImage,
+              stalePeriod: const Duration(days: 364),
+              //one week cache period
+            )),
+            placeholder: (context, urlToImage) => custumizedProgressIndicator(),
+            errorWidget: (context, urlToImage, error) =>
+                new Icon(Icons.error_outline),
+          ));
   }
+}
+
+Flexible imageContainer({required Widget child}) {
+  return Flexible(
+    fit: FlexFit.loose,
+    child: Container(width: Get.width, height: 250, child: child),
+  );
 }
 
 class FavActuItem extends StatelessWidget {
@@ -127,7 +146,7 @@ class FavActuItem extends StatelessWidget {
   final double sizeTitle;
   final double sizeLink;
   final File? file;
-  final Article article;
+  final bnm.Value article;
 
   //late Directory _appDocsDir;
   //String path = '';
@@ -161,27 +180,22 @@ class FavActuItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Flexible(
-              fit: FlexFit.loose,
-              child: Container(
-                width: Get.width,
-                height: 250,
-                child: file == null
-                    ? Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset(
-                          'assets/images/worldwide.png',
-                          width: .27 * width,
-                          height: .13 * height,
-                          color: mainHexColor,
-                          //fit: BoxFit.cover,
-                        ),
-                      )
-                    : Image.file(
-                        file!,
-                        fit: BoxFit.cover,
+            imageContainer(
+              child: file == null
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        'assets/images/worldwide.png',
+                        width: .27 * width,
+                        height: .13 * height,
+                        color: mainHexColor,
+                        //fit: BoxFit.cover,
                       ),
-              ),
+                    )
+                  : Image.file(
+                      file!,
+                      fit: BoxFit.cover,
+                    ),
             ),
             SizedBox(
               height: 7.0,
@@ -193,7 +207,7 @@ class FavActuItem extends StatelessWidget {
                 right: 10.0,
               ),
               child: Text(
-                article.title,
+                article.name,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

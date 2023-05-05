@@ -3,13 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-
+import 'package:my_actu/models/bing_news_model.dart' as bnm;
 import '../../constants/app_constants.dart';
-import '../../models/top_headlines.dart';
 import '../../utils/file_functions.dart';
 
 class DetailsController extends GetxController {
-  Article article = Get.arguments;
+  bnm.Value article = Get.arguments;
   Rx<Color> favColorIcon = mainHexColor.obs;
   // var imageFile;
   @override
@@ -26,7 +25,7 @@ class DetailsController extends GetxController {
   }
 
   void colorInit() {
-    if (storage.read(article.title) == null) {
+    if (storage.read(article.name) == null) {
       favColorIcon.value = mainHexColor;
     } else {
       favColorIcon.value = redColor;
@@ -40,10 +39,11 @@ class DetailsController extends GetxController {
     imageFile = file;
     storage.write('article.urlToImage!', imageFile); */
 
-    if (article.urlToImage == '')
+    if (article.image!.thumbnail.contentUrl == '')
       article.imageFile = null;
     else {
-      File? file = await saveImage(article.urlToImage, article.title);
+      File? file =
+          await saveImage(article.image!.thumbnail.contentUrl, article.name);
       article.imageFile = file!;
     }
     log('imageFile  ' + article.imageFile.toString());
@@ -53,14 +53,14 @@ class DetailsController extends GetxController {
     // update();
 
     // article.imageFile = await getFile(article.title);
-    storage.write(article.title, article.toJson());
+    storage.write(article.name, article.toJson());
 
     favColorIcon.value = redColor;
     Get.snackbar('Favoris', "L'article est bien ajouté aux favoris");
 
     print('--------------STORE--------------');
 
-    print(storage.read(article.title).toString());
+    print(storage.read(article.name).toString());
     print('--------------STORE ');
     print('--------------STORE ');
     print('--------------STORE--------------');
@@ -70,10 +70,10 @@ class DetailsController extends GetxController {
 
   Future<void> removeAsFavorite() async {
     if (article.imageFile != null) {
-      await removeImage(article.title);
+      await removeImage(article.name);
     }
 
-    storage.remove(article.title);
+    storage.remove(article.name);
     print('--------------REMOVE-STORE--------------');
     favColorIcon.value = mainHexColor;
     update();

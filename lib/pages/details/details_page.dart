@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
-import 'package:my_actu/models/top_headlines.dart';
 import 'package:my_actu/pages/favorites/favorites_controller.dart';
 import 'package:my_actu/pages/top_headlines/top_headlines_controller.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../models/bing_news_model.dart' as bnm;
 import 'details_controller.dart';
 
 class DetailPage extends StatefulWidget {
@@ -23,7 +23,7 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-  Article article = Get.arguments;
+  bnm.Value article = Get.arguments;
 
   _launchURL() async {
     Uri url = Uri.parse(article.url);
@@ -42,14 +42,15 @@ class _DetailPageState extends State<DetailPage> {
   Widget build(BuildContext context) {
     final DetailsController detailsController = Get.put(DetailsController());
     log('article.url : ' + article.url);
-    log('article.urlToImage : ' + article.urlToImage);
+    log('article.image!.thumbnail.contentUrl : ' +
+        article.image!.thumbnail.contentUrl);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
 //APP_MENU
           (article.imageFile == null)
-              ? (article.urlToImage == '')
+              ? (article.image!.thumbnail.contentUrl == '')
                   ? Stack(
                       children: [
                         Container(
@@ -78,10 +79,10 @@ class _DetailPageState extends State<DetailPage> {
                       child: CachedNetworkImage(
                         // fit: BoxFit.cover,
                         cacheManager: CacheManager(Config(
-                          article.urlToImage,
+                          article.image!.thumbnail.contentUrl,
                           // stalePeriod: const Duration(days: 364),
                         )),
-                        imageUrl: article.urlToImage,
+                        imageUrl: article.image!.thumbnail.contentUrl,
                         width: Get.width,
                         imageBuilder: (context, imageProvider) => Container(
                           height: 350.0,
@@ -138,7 +139,7 @@ class _DetailPageState extends State<DetailPage> {
                   //color: blackColor,
                   padding: EdgeInsets.only(left: 30, top: 10, right: 10),
                   child: Text(
-                    article.title,
+                    article.name,
                     maxLines: 5,
                     textScaleFactor: 1.5,
                     overflow: TextOverflow.ellipsis,
@@ -152,7 +153,7 @@ class _DetailPageState extends State<DetailPage> {
                 Container(
                     padding: EdgeInsets.only(
                         left: 30, top: 8, right: 40, bottom: 10),
-                    child: Text('Publié le : ${article.publishedAt}'))
+                    child: Text('Publié le : ${article.datePublished}'))
               ],
             ),
           ),
@@ -164,7 +165,7 @@ class _DetailPageState extends State<DetailPage> {
                 //color: Colors.green,
                 padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
                 child: Text(
-                  article.content,
+                  article.description,
                   style: TextStyle(
                     fontSize: 15.2,
                   ),
@@ -234,7 +235,7 @@ class _DetailPageState extends State<DetailPage> {
               child: Obx(() {
                 return RawMaterialButton(
                   onPressed: () {
-                    if (storage.read(article.title) == null) {
+                    if (storage.read(article.name) == null) {
                       final TopHeadLinesController topHeadLinesController =
                           Get.find<TopHeadLinesController>();
                       if (topHeadLinesController.hasInternet.value)

@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'dart:developer';
 
-import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 
-import '../models/top_headlines.dart';
-import '../utils/dio_requests.dart';
+import '../models/bing_news_model.dart';
 
 class ApiRequest {
   final String url;
@@ -16,23 +13,10 @@ class ApiRequest {
     required this.url,
   });
 
-  Future<List<Article>> getData() async {
+  static Future<List<Value>?> fetchAlbum(
+      String uri, Map<String, String>? headers) async {
     try {
-      var response = await dio().get(this.url, queryParameters: this.data);
-
-      print(response.data.toString());
-      // return NewsMediaStack.fromJson(response.data).data;
-
-      return TopHeadLines.fromJson(response.data).articles;
-    } on DioError catch (e) {
-      print(e.toString());
-      rethrow;
-    }
-  }
-
-  static Future<List<Article>?> fetchAlbum(String uri) async {
-    try {
-      final response = await http.get(Uri.parse(uri));
+      final response = await http.get(Uri.parse(uri), headers: headers);
 
       if (response.statusCode == 200) {
         // If the server did return a 200 OK response,
@@ -40,9 +24,12 @@ class ApiRequest {
         log("Connection to API is quite!!!");
         String json = response.body;
 
-        List<Article> articles = topHeadLinesFromJson(json).articles;
-        log("---length of articles--- : " + articles.length.toString());
+        log("---length of articles--- : " +
+            bingNewsModelFromJson(json).value.length.toString());
         log(json);
+        List<Value> articles = bingNewsModelFromJson(json).value;
+        log("---length of articles--- : " + articles.length.toString());
+
         /*  List<Article> articlesWithImages = [];
         articles.forEach(
           (item) {
