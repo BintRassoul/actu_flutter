@@ -6,21 +6,22 @@ import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:my_actu/constants/app_constants.dart';
 
+import '../../models/real_time_news_data_model.dart';
 import '../../models/top_headlines.dart';
 import '../../services/api_request.dart';
 import '../../services/config_reader.dart';
 
 class TopHeadLinesController extends GetxController {
-  var articlesList = [].obs;
-  var europeArticlesList = [].obs;
-  var afriqueArticlesList = [].obs;
-  var ameriqueArticlesList = [].obs;
-  var asieArticlesList = [].obs;
-  var articlesTopList = [].obs;
-  var europeArticlesTopList = [].obs;
-  var ameriqueArticlesTopList = [].obs;
-  var afriqueArticlesTopList = [].obs;
-  var asieArticlesTopList = [].obs;
+  RxList<Datum> articlesList = RxList();
+  RxList<Datum> europeArticlesList = RxList();
+  RxList<Datum> afriqueArticlesList = RxList();
+  RxList<Datum> ameriqueArticlesList = RxList();
+  RxList<Datum> asieArticlesList = RxList();
+  RxList<Datum> articlesTopList = RxList();
+  RxList<Datum> europeArticlesTopList = RxList();
+  RxList<Datum> ameriqueArticlesTopList = RxList();
+  RxList<Datum> afriqueArticlesTopList = RxList();
+  RxList<Datum> asieArticlesTopList = RxList();
   var isLoading = true.obs;
 
   RxString query = ''.obs;
@@ -102,12 +103,15 @@ class TopHeadLinesController extends GetxController {
   }
 
 //-------------------------------------------------------
-  Future<List> getArticles(
+  Future<List<Datum>?> getArticles(
       String sType, String category, bool loadingAll) async {
     ctg.value = category;
-    var articles;
+    late List<Datum>? articles;
     String apiKey = ConfigReader.getApiKey();
-
+    Map<String, String> headers = {
+      'X-RapidAPI-Key': apiKey,
+      'X-RapidAPI-Host': 'real-time-news-data.p.rapidapi.com'
+    };
     if (sType == 'world') {
       if (category == 'technologie') {
         category = 'technology';
@@ -115,21 +119,21 @@ class TopHeadLinesController extends GetxController {
         category = 'health';
       }
       articles = await ApiRequest.fetchAlbum(
-          'https://api.bing.microsoft.com/v7.0/news/search?q=monde+actualités&mkt=en-AU&setLang=en-AU&freshness=Month&originalImg=true&count=100',
-          {"Ocp-Apim-Subscription-Key": apiKey});
+          "https://real-time-news-data.p.rapidapi.com/topic-headlines?topic=WORLD&country=FR&lang=fr",
+          headers);
     } else {
       category = countriesList[sType]?[category] ?? '';
 
       articles = await ApiRequest.fetchAlbum(
-          'https://api.bing.microsoft.com/v7.0/news/search?q=$sType&freshness=Month&count=100',
-          {"Ocp-Apim-Subscription-Key": apiKey});
+          "https://real-time-news-data.p.rapidapi.com/topic-headlines?topic=WORLD&country=US&lang=en",
+          headers);
     }
     if (articles != null) {
       isLoading(false);
       switch (sType) {
         case 'world':
           articlesList.value = articles;
-          if (articlesTopList.length != 0) articlesTopList = [].obs;
+          if (articlesTopList.length != 0) articlesTopList.value = [];
           for (int i = 0; i < 5; i++) {
             articlesTopList.add(articles[i]);
           }
@@ -140,7 +144,7 @@ class TopHeadLinesController extends GetxController {
         case 'afrique':
           afriqueArticlesList.value = articles;
           if (afriqueArticlesTopList.length != 0)
-            afriqueArticlesTopList = [].obs;
+            afriqueArticlesTopList.value = [];
 
           for (int i = 0; i < 5; i++) {
             afriqueArticlesTopList.add(articles[i]);
@@ -152,7 +156,7 @@ class TopHeadLinesController extends GetxController {
         case 'amerique':
           ameriqueArticlesList.value = articles;
           if (ameriqueArticlesTopList.length != 0)
-            ameriqueArticlesTopList = [].obs;
+            ameriqueArticlesTopList.value = [];
 
           for (int i = 0; i < 5; i++) {
             ameriqueArticlesTopList.add(articles[i]);
@@ -163,7 +167,8 @@ class TopHeadLinesController extends GetxController {
 
         case 'europe':
           europeArticlesList.value = articles;
-          if (europeArticlesTopList.length != 0) europeArticlesTopList = [].obs;
+          if (europeArticlesTopList.length != 0)
+            europeArticlesTopList.value = [];
 
           for (int i = 0; i < 5; i++) {
             europeArticlesTopList.add(articles[i]);
@@ -174,7 +179,7 @@ class TopHeadLinesController extends GetxController {
 
         case 'asie':
           asieArticlesList.value = articles;
-          if (asieArticlesTopList.length != 0) asieArticlesTopList = [].obs;
+          if (asieArticlesTopList.length != 0) asieArticlesTopList.value = [];
 
           for (int i = 0; i < 5; i++) {
             asieArticlesTopList.add(articles[i]);
@@ -184,6 +189,7 @@ class TopHeadLinesController extends GetxController {
           return loadingAll ? articles : asieArticlesTopList.toList();
       }
     }
+
     return articles;
   }
 

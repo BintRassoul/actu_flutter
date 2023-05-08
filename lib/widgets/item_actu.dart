@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
 import 'package:my_actu/routes/app_routes.dart';
 
-import '../models/bing_news_model.dart' as bnm;
+import 'package:my_actu/models/real_time_news_data_model.dart';
 import 'customized_progress_indicator.dart';
 
 class ActuItem extends StatelessWidget {
@@ -16,7 +16,7 @@ class ActuItem extends StatelessWidget {
   final double sizeTitle;
   final double sizeLink;
 
-  final bnm.Value article;
+  final Datum article;
 
   //late Directory _appDocsDir;
   //String path = '';
@@ -60,9 +60,7 @@ class ActuItem extends StatelessWidget {
           children: [
             _getChild(
                 context: context,
-                urlToImage: article.image == null
-                    ? ""
-                    : article.image!.thumbnail.contentUrl),
+                urlToImage: article.photoUrl == null ? "" : article.photoUrl!),
 
             // ),
 
@@ -76,7 +74,7 @@ class ActuItem extends StatelessWidget {
                 right: 10.0,
               ),
               child: Text(
-                article.name,
+                article.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -86,7 +84,7 @@ class ActuItem extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(10.0),
               child: Text(
-                article.url,
+                article.sourceUrl,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'Segoe UI',
@@ -146,7 +144,7 @@ class FavActuItem extends StatelessWidget {
   final double sizeTitle;
   final double sizeLink;
   final File? file;
-  final bnm.Value article;
+  final Datum article;
 
   //late Directory _appDocsDir;
   //String path = '';
@@ -207,7 +205,7 @@ class FavActuItem extends StatelessWidget {
                 right: 10.0,
               ),
               child: Text(
-                article.name,
+                article.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -217,7 +215,7 @@ class FavActuItem extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(10.0),
               child: Text(
-                article.url,
+                article.sourceUrl,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'Segoe UI',

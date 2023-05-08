@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
+import 'package:my_actu/models/real_time_news_data_model.dart';
 import 'package:my_actu/pages/favorites/favorites_controller.dart';
 import 'package:my_actu/pages/top_headlines/top_headlines_controller.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import '../../models/bing_news_model.dart' as bnm;
 import 'details_controller.dart';
 
 class DetailPage extends StatefulWidget {
@@ -23,10 +23,10 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-  bnm.Value article = Get.arguments;
+  Datum article = Get.arguments;
 
   _launchURL() async {
-    Uri url = Uri.parse(article.url);
+    Uri url = Uri.parse(article.sourceUrl);
     print(url);
     try {
       if (await canLaunchUrl(url)) {
@@ -41,16 +41,15 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     final DetailsController detailsController = Get.put(DetailsController());
-    log('article.url : ' + article.url);
-    log('article.image!.thumbnail.contentUrl : ' +
-        article.image!.thumbnail.contentUrl);
+    log('article.url : ' + article.sourceUrl);
+    log('article.photoUrl! : ' + article.photoUrl!);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
 //APP_MENU
           (article.imageFile == null)
-              ? (article.image!.thumbnail.contentUrl == '')
+              ? (article.photoUrl! == '')
                   ? Stack(
                       children: [
                         Container(
@@ -79,10 +78,10 @@ class _DetailPageState extends State<DetailPage> {
                       child: CachedNetworkImage(
                         // fit: BoxFit.cover,
                         cacheManager: CacheManager(Config(
-                          article.image!.thumbnail.contentUrl,
+                          article.photoUrl!,
                           // stalePeriod: const Duration(days: 364),
                         )),
-                        imageUrl: article.image!.thumbnail.contentUrl,
+                        imageUrl: article.photoUrl!,
                         width: Get.width,
                         imageBuilder: (context, imageProvider) => Container(
                           height: 350.0,
@@ -139,7 +138,7 @@ class _DetailPageState extends State<DetailPage> {
                   //color: blackColor,
                   padding: EdgeInsets.only(left: 30, top: 10, right: 10),
                   child: Text(
-                    article.name,
+                    article.title,
                     maxLines: 5,
                     textScaleFactor: 1.5,
                     overflow: TextOverflow.ellipsis,
@@ -153,7 +152,7 @@ class _DetailPageState extends State<DetailPage> {
                 Container(
                     padding: EdgeInsets.only(
                         left: 30, top: 8, right: 40, bottom: 10),
-                    child: Text('Publié le : ${article.datePublished}'))
+                    child: Text('Publié le : ${article.publishedDatetimeUtc}'))
               ],
             ),
           ),
@@ -165,7 +164,7 @@ class _DetailPageState extends State<DetailPage> {
                 //color: Colors.green,
                 padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
                 child: Text(
-                  article.description,
+                  article.title,
                   style: TextStyle(
                     fontSize: 15.2,
                   ),
@@ -235,7 +234,7 @@ class _DetailPageState extends State<DetailPage> {
               child: Obx(() {
                 return RawMaterialButton(
                   onPressed: () {
-                    if (storage.read(article.name) == null) {
+                    if (storage.read(article.title) == null) {
                       final TopHeadLinesController topHeadLinesController =
                           Get.find<TopHeadLinesController>();
                       if (topHeadLinesController.hasInternet.value)
@@ -265,7 +264,7 @@ class _DetailPageState extends State<DetailPage> {
               right: 0.0,
               child: RawMaterialButton(
                 onPressed: () async {
-                  final urlPreview = article.url;
+                  final urlPreview = article.sourceUrl;
                   await Share.share("Top News : $urlPreview");
                 },
                 child: new Icon(

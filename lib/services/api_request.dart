@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
-import '../models/bing_news_model.dart';
+import '../models/real_time_news_data_model.dart';
 
 class ApiRequest {
   final String url;
@@ -13,7 +13,7 @@ class ApiRequest {
     required this.url,
   });
 
-  static Future<List<Value>?> fetchAlbum(
+  static Future<List<Datum>?> fetchAlbum(
       String uri, Map<String, String>? headers) async {
     try {
       final response = await http.get(Uri.parse(uri), headers: headers);
@@ -25,9 +25,9 @@ class ApiRequest {
         String json = response.body;
 
         log("---length of articles--- : " +
-            bingNewsModelFromJson(json).value.length.toString());
+            realTimeNewsDataModelFromJson(json).data.length.toString());
         log(json);
-        List<Value> articles = bingNewsModelFromJson(json).value;
+        List<Datum> articles = realTimeNewsDataModelFromJson(json).data;
         log("---length of articles--- : " + articles.length.toString());
 
         /*  List<Article> articlesWithImages = [];
