@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:my_actu/models/real_time_news_data_model.dart';
+import 'package:my_actu/models/news_data_io_model.dart';
 import '../../constants/app_constants.dart';
 import '../../utils/file_functions.dart';
 
 class DetailsController extends GetxController {
-  Datum article = Get.arguments;
+  Result article = Get.arguments;
   Rx<Color> favColorIcon = mainHexColor.obs;
   // var imageFile;
   @override
@@ -39,10 +39,10 @@ class DetailsController extends GetxController {
     imageFile = file;
     storage.write('article.urlToImage!', imageFile); */
 
-    if (article.photoUrl == '')
+    if (article.imageUrl == '')
       article.imageFile = null;
     else {
-      File? file = await saveImage(article.photoUrl!, article.title);
+      File? file = await saveImage(article.imageUrl!, article.title);
       article.imageFile = file!;
     }
     log('imageFile  ' + article.imageFile.toString());

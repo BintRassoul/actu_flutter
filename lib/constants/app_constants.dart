@@ -24,13 +24,20 @@ double sizeFavTitle = 22;
 double sizeFavLink = 20;
 
 final List<String> categoriesList = [
-  'general',
-  'business',
-  'sante',
-  'sports',
-  'technologie',
-  'science'
+  "business",
+  "entertainment",
+  "environment",
+  "food",
+  "health",
+  "politics",
+  "science",
+  "sports",
+  "technology",
+  "top",
+  "tourism",
+  "world",
 ];
+
 final countriesList = {
   'europe': {
     'France': 'fr',

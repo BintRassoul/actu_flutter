@@ -6,22 +6,21 @@ import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:my_actu/constants/app_constants.dart';
 
-import '../../models/real_time_news_data_model.dart';
-import '../../models/top_headlines.dart';
+import '../../models/news_data_io_model.dart';
 import '../../services/api_request.dart';
 import '../../services/config_reader.dart';
 
 class TopHeadLinesController extends GetxController {
-  RxList<Datum> articlesList = RxList();
-  RxList<Datum> europeArticlesList = RxList();
-  RxList<Datum> afriqueArticlesList = RxList();
-  RxList<Datum> ameriqueArticlesList = RxList();
-  RxList<Datum> asieArticlesList = RxList();
-  RxList<Datum> articlesTopList = RxList();
-  RxList<Datum> europeArticlesTopList = RxList();
-  RxList<Datum> ameriqueArticlesTopList = RxList();
-  RxList<Datum> afriqueArticlesTopList = RxList();
-  RxList<Datum> asieArticlesTopList = RxList();
+  RxList<Result> articlesList = RxList();
+  RxList<Result> europeArticlesList = RxList();
+  RxList<Result> afriqueArticlesList = RxList();
+  RxList<Result> ameriqueArticlesList = RxList();
+  RxList<Result> asieArticlesList = RxList();
+  RxList<Result> articlesTopList = RxList();
+  RxList<Result> europeArticlesTopList = RxList();
+  RxList<Result> ameriqueArticlesTopList = RxList();
+  RxList<Result> afriqueArticlesTopList = RxList();
+  RxList<Result> asieArticlesTopList = RxList();
   var isLoading = true.obs;
 
   RxString query = ''.obs;
@@ -61,11 +60,15 @@ class TopHeadLinesController extends GetxController {
 //-------------------------------------------------------
 
   void fetchArticles(String category) async {
-    getArticles('world', category, false);
-    getArticles('europe', 'France', false);
-    getArticles('afrique', 'Egypte', false);
-    getArticles('amerique', 'USA', false);
-    getArticles('asie', 'Chine', false);
+    getArticles(
+        sType: 'world', category: category, country: "", loadingAll: false);
+    getArticles(
+        sType: 'europe', category: "", country: "fr", loadingAll: false);
+    getArticles(
+        sType: 'afrique', category: "", country: "sa", loadingAll: false);
+    getArticles(
+        sType: 'amerique', category: "", country: "us", loadingAll: false);
+    getArticles(sType: 'asie', category: "", country: "cn", loadingAll: false);
   }
 
 //-------------------------------------------------------
@@ -103,30 +106,26 @@ class TopHeadLinesController extends GetxController {
   }
 
 //-------------------------------------------------------
-  Future<List<Datum>?> getArticles(
-      String sType, String category, bool loadingAll) async {
+  Future<List<Result>?> getArticles(
+      {required String sType,
+      required String country,
+      required String category,
+      required bool loadingAll}) async {
     ctg.value = category;
-    late List<Datum>? articles;
+    late List<Result>? articles;
     String apiKey = ConfigReader.getApiKey();
-    Map<String, String> headers = {
+/*     Map<String, String> headers = {
       'X-RapidAPI-Key': apiKey,
       'X-RapidAPI-Host': 'real-time-news-data.p.rapidapi.com'
-    };
+    }; */
     if (sType == 'world') {
-      if (category == 'technologie') {
-        category = 'technology';
-      } else if (category == 'sante') {
-        category = 'health';
-      }
       articles = await ApiRequest.fetchAlbum(
-          "https://real-time-news-data.p.rapidapi.com/topic-headlines?topic=WORLD&country=FR&lang=fr",
-          headers);
+          "https://newsdata.io/api/1/news?apikey=$apiKey&category=$category&language=en",
+          null);
     } else {
-      category = countriesList[sType]?[category] ?? '';
-
       articles = await ApiRequest.fetchAlbum(
-          "https://real-time-news-data.p.rapidapi.com/topic-headlines?topic=WORLD&country=US&lang=en",
-          headers);
+          "https://newsdata.io/api/1/news?apikey=$apiKey&country=$country",
+          null);
     }
     if (articles != null) {
       isLoading(false);

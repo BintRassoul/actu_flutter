@@ -18,7 +18,7 @@ Widget sectionPage(
     {required String sectionType,
     required bool isLoading,
     required String title,
-    required String category,
+    required String country,
     required Axis axe}) {
   // bool isThereInternet = controller.hasInternet.value;
   return Padding(
@@ -32,7 +32,10 @@ Widget sectionPage(
             height: 235.0,
             child: FutureBuilder(
                 future: topheadlinesController.getArticles(
-                    sectionType, category, false),
+                    sType: sectionType,
+                    category: sectionType == "world" ? "world" : "",
+                    country: country,
+                    loadingAll: false),
                 builder: (context, snapshot) {
                   if (snapshot.data != null && snapshot.hasData) {
                     return loadChild(

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
 import 'package:my_actu/pages/home/widgets/app_bar.dart';
 
-import '../../models/top_headlines.dart';
 import '../../widgets/section_page.dart';
 import '../../widgets/utils.dart';
 import 'favorites_controller.dart';

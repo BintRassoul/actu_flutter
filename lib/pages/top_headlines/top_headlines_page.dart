@@ -87,11 +87,14 @@ class TopHeadLinesPage extends StatelessWidget {
                             ),
                             onPressed: () {
                               topheadlinesController.isLoading.value = true;
-
+                              topheadlinesController.ctg.value =
+                                  topheadlinesController.categories[index];
                               topheadlinesController.getArticles(
-                                  sType,
-                                  topheadlinesController.categories[index],
-                                  true);
+                                  sType: sType,
+                                  category:
+                                      topheadlinesController.categories[index],
+                                  country: "",
+                                  loadingAll: true);
                             },
                             child: Center(
                                 child: Text(

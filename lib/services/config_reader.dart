@@ -11,7 +11,7 @@ abstract class ConfigReader {
   }
 
   static String getApiKey() {
-    log(_config['api_key_real_time_news_data'] as String);
-    return _config['api_key_real_time_news_data'] as String;
+    log(_config['api_key_news_data_io'] as String);
+    return _config['api_key_news_data_io'] as String;
   }
 }

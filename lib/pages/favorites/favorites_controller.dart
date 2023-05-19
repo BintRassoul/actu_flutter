@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
-import 'package:my_actu/models/top_headlines.dart';
+import 'package:my_actu/models/news_data_io_model.dart';
 
 class FavoritesController extends GetxController {
   var articlesList = [].obs;
@@ -17,7 +17,7 @@ class FavoritesController extends GetxController {
 
   void getData() {
     dynamic favKeys = storage.getKeys();
-    List<Article> listFav = [];
+    List<Result> listFav = [];
     if (favKeys != null) {
       log('SOME FAVS');
 
@@ -25,7 +25,7 @@ class FavoritesController extends GetxController {
         // log('storage.read ::::' + storage.read(i).toString());
 
         final Map<String, dynamic> map = storage.read(i);
-        Article article = Article.fromJson(map);
+        Result article = Result.fromJson(map);
         // article.imageFile = await getFile(article.title);
 
         listFav.add(article);
