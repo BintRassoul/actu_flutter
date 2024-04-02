@@ -10,6 +10,7 @@ import '../pages/components/loading_overlay.dart';
 import '../pages/favorites/favorites_controller.dart';
 import '../pages/top_headlines/top_headlines_controller.dart';
 import '../routes/app_routes.dart';
+import 'customized_progress_indicator.dart';
 import 'item_actu.dart';
 
 final TopHeadLinesController topheadlinesController =
@@ -105,7 +106,7 @@ Widget loadChild(
       }
       articles = newArticles.value;
 
-      return displayAllTopItems(isLoading, axe, articles);
+      return displayAllTopItems(controller, isLoading, axe, articles);
     } else {
       /*    RxList topArticle = [].obs;
       switch (sectionType) {
@@ -177,19 +178,30 @@ LoadingOverlay displayAllFavItems(bool isLoading, Axis axe, List articles) {
           }));
 }
 
-LoadingOverlay displayAllTopItems(bool isLoading, Axis axe, List articles) {
+LoadingOverlay displayAllTopItems(TopHeadLinesController topHeadLinesController,
+    bool isLoading, Axis axe, List articles) {
   log('ALL articles.length' + articles.length.toString());
+  int count = articles.length;
   return LoadingOverlay(isLoading,
       child: ListView.builder(
+          controller: topHeadLinesController.scrollController,
           scrollDirection: axe,
-          itemCount: articles.length,
+          itemCount: count + 1,
           itemBuilder: (context, index) {
-            return ActuItem(
-              widthCard: widthHomeCard,
-              sizeTitle: sizeHomeTitle,
-              sizeLink: sizeHomeLink,
-              article: articles[index],
-            );
+            if (index < count)
+              return ActuItem(
+                widthCard: widthHomeCard,
+                sizeTitle: sizeHomeTitle,
+                sizeLink: sizeHomeLink,
+                article: articles[index],
+              );
+            else
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: topHeadLinesController.hasMore.value
+                    ? custumizedProgressIndicator()
+                    : Text("No more data"),
+              );
           }));
 }
 

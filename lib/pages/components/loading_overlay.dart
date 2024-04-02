@@ -10,9 +10,9 @@ class LoadingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
+    /*  if (isLoading) {
       return custumizedProgressIndicator();
-    }
+    } */
     return child;
   }
 }

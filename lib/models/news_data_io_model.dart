@@ -5,6 +5,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:equatable/equatable.dart';
+
 NewsDataIo newsDataIoFromJson(String str) =>
     NewsDataIo.fromJson(json.decode(str));
 
@@ -52,22 +54,22 @@ class NewsDataIo {
       };
 }
 
-class Result {
-  String title;
-  String link;
-  List<String>? keywords;
-  List<String>? creator;
-  dynamic videoUrl;
-  String description;
-  String? content;
-  DateTime pubDate;
-  String? imageUrl;
-  String sourceId;
-  List<Category> category;
-  List<Country> country;
-  Language language;
-  File? imageFile;
-  int? saveAt;
+class Result extends Equatable {
+  final String title;
+  final String link;
+  final List<String>? keywords;
+  final List<String>? creator;
+  final dynamic videoUrl;
+  final String description;
+  final String? content;
+  final DateTime pubDate;
+  final String? imageUrl;
+  final String sourceId;
+  final List<Category> category;
+  final List<Country> country;
+  final Language language;
+  late final File? imageFile;
+  late final int? saveAt;
 
   Result(
       {required this.title,
@@ -168,6 +170,26 @@ class Result {
         "imageFile": imageFile,
         "saveAt": saveAt,
       };
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+        title,
+        link,
+        keywords,
+        creator,
+        videoUrl,
+        description,
+        content,
+        pubDate,
+        imageUrl,
+        sourceId,
+        category,
+        country,
+        language,
+        imageFile,
+        saveAt
+      ];
 }
 
 enum Category {

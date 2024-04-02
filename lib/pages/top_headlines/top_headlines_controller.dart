@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:my_actu/constants/app_constants.dart';
@@ -22,7 +23,9 @@ class TopHeadLinesController extends GetxController {
   RxList<Result> afriqueArticlesTopList = RxList();
   RxList<Result> asieArticlesTopList = RxList();
   var isLoading = true.obs;
-
+  RxBool hasMore = RxBool(true);
+  final scrollController = ScrollController();
+  RxString nextPage = RxString("");
   RxString query = ''.obs;
   RxString place = 'general'.obs;
   RxString ctg = 'general'.obs;
@@ -48,6 +51,15 @@ class TopHeadLinesController extends GetxController {
     log('----------------fetch articles');
     log('----------------isLoading topheadlines----' +
         isLoading.value.toString());
+    scrollController.addListener(() {
+      if (scrollController.position.maxScrollExtent == scrollController.offset)
+        getArticles(
+            sType: 'world',
+            category: "world",
+            country: "",
+            loadingAll: true,
+            loadMore: true);
+    });
     super.onInit();
   }
 //-------------------------------------------------------
@@ -56,6 +68,7 @@ class TopHeadLinesController extends GetxController {
   void onClose() {
     internetSubscription.cancel();
     print('---------CLOSE-connection-------');
+    scrollController.dispose();
   }
 //-------------------------------------------------------
 
@@ -106,44 +119,78 @@ class TopHeadLinesController extends GetxController {
   }
 
 //-------------------------------------------------------
-  Future<List<Result>?> getArticles(
+  //Future<List<Result>?> getArticles(
+  Future getArticles(
       {required String sType,
       required String country,
       required String category,
-      required bool loadingAll}) async {
+      required bool loadingAll,
+      bool loadMore = false}) async {
     ctg.value = category;
     late List<Result>? articles;
+    late NewsDataIo? news;
     String apiKey = ConfigReader.getApiKey();
-/*     Map<String, String> headers = {
-      'X-RapidAPI-Key': apiKey,
-      'X-RapidAPI-Host': 'real-time-news-data.p.rapidapi.com'
-    }; */
+
+    //Make sure that we take one request at a time
+    /* if (isLoading.value) return;
+    isLoading(true);
+ */
     if (sType == 'world') {
-      articles = await ApiRequest.fetchAlbum(
-          "https://newsdata.io/api/1/news?apikey=$apiKey&category=$category&language=en",
-          null);
+      if (loadMore) {
+        news = await ApiRequest.fetchAlbum(
+            "https://newsdata.io/api/1/news?apikey=$apiKey&category=$category&language=en&page=${nextPage.value}",
+            null);
+        articles = news?.results;
+        nextPage.value = news!.nextPage;
+        update();
+      } else {
+        news = await ApiRequest.fetchAlbum(
+            "https://newsdata.io/api/1/news?apikey=$apiKey&category=$category&language=en",
+            null);
+        articles = news?.results;
+        nextPage.value = news!.nextPage;
+        update();
+      }
     } else {
-      articles = await ApiRequest.fetchAlbum(
+      news = await ApiRequest.fetchAlbum(
           "https://newsdata.io/api/1/news?apikey=$apiKey&country=$country",
           null);
+      articles =
+          news?.results.where((element) => element.imageUrl != "").toList();
+      if (articles!.length <= 5)
+        getArticles(
+            sType: sType,
+            category: category,
+            country: country,
+            loadingAll: loadingAll,
+            loadMore: loadMore);
     }
     if (articles != null) {
       isLoading(false);
       switch (sType) {
         case 'world':
-          articlesList.value = articles;
-          if (articlesTopList.length != 0) articlesTopList.value = [];
+          if (articlesList.length < news!.totalResults) {
+            if (articlesList.length == 10 &&
+                articlesList.first == articles.first)
+              articlesList.value = articles;
+            else
+              articlesList.addAll(articles.map<Result>((e) => e).toList());
+          } else
+            // This boolean indicates whether the list of items is completed or not;
+            hasMore(false);
+
+          if (articlesTopList.length != 0) articlesTopList.clear();
           for (int i = 0; i < 5; i++) {
             articlesTopList.add(articles[i]);
           }
           update();
 
-          return loadingAll ? articles : articlesTopList.toList();
+          return loadingAll ? articlesList : articlesTopList.toList();
         //break;
         case 'afrique':
           afriqueArticlesList.value = articles;
           if (afriqueArticlesTopList.length != 0)
-            afriqueArticlesTopList.value = [];
+            afriqueArticlesTopList.clear();
 
           for (int i = 0; i < 5; i++) {
             afriqueArticlesTopList.add(articles[i]);
@@ -155,7 +202,7 @@ class TopHeadLinesController extends GetxController {
         case 'amerique':
           ameriqueArticlesList.value = articles;
           if (ameriqueArticlesTopList.length != 0)
-            ameriqueArticlesTopList.value = [];
+            ameriqueArticlesTopList.clear();
 
           for (int i = 0; i < 5; i++) {
             ameriqueArticlesTopList.add(articles[i]);
@@ -166,8 +213,7 @@ class TopHeadLinesController extends GetxController {
 
         case 'europe':
           europeArticlesList.value = articles;
-          if (europeArticlesTopList.length != 0)
-            europeArticlesTopList.value = [];
+          if (europeArticlesTopList.length != 0) europeArticlesTopList.clear();
 
           for (int i = 0; i < 5; i++) {
             europeArticlesTopList.add(articles[i]);
@@ -178,7 +224,7 @@ class TopHeadLinesController extends GetxController {
 
         case 'asie':
           asieArticlesList.value = articles;
-          if (asieArticlesTopList.length != 0) asieArticlesTopList.value = [];
+          if (asieArticlesTopList.length != 0) asieArticlesTopList.clear();
 
           for (int i = 0; i < 5; i++) {
             asieArticlesTopList.add(articles[i]);
@@ -213,4 +259,17 @@ class TopHeadLinesController extends GetxController {
     }
     return categories;
   }
+/* 
+  Future refresh() {
+    isLoading(false);
+    hasMore(true);
+    nextPage('');
+    articlesList.clear();
+    return getArticles(
+        sType: 'world',
+        category: "world",
+        country: "",
+        loadingAll: true,
+        loadMore: false);
+  } */
 }

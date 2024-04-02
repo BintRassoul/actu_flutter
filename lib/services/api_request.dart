@@ -14,7 +14,7 @@ class ApiRequest {
     required this.url,
   });
 
-  static Future<List<Result>?> fetchAlbum(
+  static Future<NewsDataIo?> fetchAlbum(
       String uri, Map<String, String>? headers) async {
     //late List<Result> articles;
     final response = await http.get(Uri.parse(uri), headers: headers);
@@ -28,8 +28,8 @@ class ApiRequest {
       log("---length of articles--- : " +
           newsDataIoFromJson(json).results.length.toString());
       log(json);
-      List<Result> articles = newsDataIoFromJson(json).results;
-      log("---length of articles--- : " + articles.length.toString());
+      NewsDataIo articles = newsDataIoFromJson(json);
+      log("---length of articles--- : " + articles.results.length.toString());
 
       /*  List<Article> articlesWithImages = [];
         articles.forEach(

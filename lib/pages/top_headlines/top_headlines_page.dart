@@ -12,6 +12,7 @@ import 'top_headlines_controller.dart';
 class TopHeadLinesPage extends StatelessWidget {
   final TopHeadLinesController topheadlinesController =
       Get.find<TopHeadLinesController>();
+  final controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
