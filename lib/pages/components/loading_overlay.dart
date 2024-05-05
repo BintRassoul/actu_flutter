@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../widgets/customized_progress_indicator.dart';
+
 class LoadingOverlay extends StatelessWidget {
   final Widget child;
   final bool isLoading;
@@ -8,11 +10,9 @@ class LoadingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+    /*  if (isLoading) {
+      return custumizedProgressIndicator();
+    } */
     return child;
   }
 }

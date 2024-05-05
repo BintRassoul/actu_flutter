@@ -1,12 +1,15 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-
+import 'package:my_actu/models/news_data_io_model.dart';
 import '../../constants/app_constants.dart';
-import '../../models/top_headlines.dart';
+import '../../utils/file_functions.dart';
 
 class DetailsController extends GetxController {
-  Article article = Get.arguments;
-  Rx<Color> favColorIcon = Color.fromRGBO(57, 182, 245, 1).obs;
+  Result article = Get.arguments;
+  Rx<Color> favColorIcon = mainHexColor.obs;
   // var imageFile;
   @override
   void onInit() {
@@ -23,9 +26,9 @@ class DetailsController extends GetxController {
 
   void colorInit() {
     if (storage.read(article.title) == null) {
-      favColorIcon.value = Color.fromRGBO(57, 182, 245, 1);
+      favColorIcon.value = mainHexColor;
     } else {
-      favColorIcon.value = Color.fromARGB(255, 231, 18, 178);
+      favColorIcon.value = redColor;
     }
     update();
   }
@@ -35,22 +38,43 @@ class DetailsController extends GetxController {
         .getImage(article.urlToImage!);
     imageFile = file;
     storage.write('article.urlToImage!', imageFile); */
+
+    if (article.imageUrl == '')
+      article.imageFile = null;
+    else {
+      File? file = await saveImage(article.imageUrl!, article.title);
+      article.imageFile = file!;
+    }
+    log('imageFile  ' + article.imageFile.toString());
+    //save date for
+    article.saveAt = DateTime.now().millisecondsSinceEpoch;
+
+    // update();
+
+    // article.imageFile = await getFile(article.title);
     storage.write(article.title, article.toJson());
 
-    print('--------------STORE--------------');
-    print(storage.read(article.title).toString());
-    print('--------------STORE--------------');
-    print('--------------STORE--------------');
-    print('--------------STORE--------------');
-    favColorIcon.value = Color.fromARGB(255, 231, 18, 178);
-    update();
+    favColorIcon.value = redColor;
     Get.snackbar('Favoris', "L'article est bien ajouté aux favoris");
+
+    print('--------------STORE--------------');
+
+    print(storage.read(article.title).toString());
+    print('--------------STORE ');
+    print('--------------STORE ');
+    print('--------------STORE--------------');
+
+    update();
   }
 
-  void removeAsFavorite() {
+  Future<void> removeAsFavorite() async {
+    if (article.imageFile != null) {
+      await removeImage(article.title);
+    }
+
     storage.remove(article.title);
     print('--------------REMOVE-STORE--------------');
-    favColorIcon.value = Color.fromRGBO(57, 182, 245, 1);
+    favColorIcon.value = mainHexColor;
     update();
     Get.snackbar('Favoris', "L'article a bien été supprimé des favoris");
   }

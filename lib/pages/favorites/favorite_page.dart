@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
 import 'package:my_actu/pages/home/widgets/app_bar.dart';
@@ -27,31 +28,28 @@ class _FavoritePageState extends State<FavoritePage> {
           Padding(
             padding: EdgeInsets.all(15.0),
             child: Row(children: [
-              Align(
-                alignment: Alignment(-0.84, -0.3),
-                child: InkWell(
-                    onTap: () {
-                      favController.getData();
-                      Get.back();
-                    },
-                    splashColor: secondColor,
-                    borderRadius: BorderRadius.circular(32.0),
-                    child: /* SvgPicture.asset(
-                                          "assets/svg/icon_expand_left.svg",
-                                        ) */
-                        Icon(Icons.keyboard_double_arrow_left,
-                            size: 33.0, color: blackColor)),
-              ),
+              GestureDetector(
+                  onTap: () {
+                    favController.getData();
+                    Get.back();
+                  },
+                  child: SvgPicture.asset(
+                    "assets/svg/icon_expand_left.svg",
+                    //height: 100,
+                    fit: BoxFit.cover,
+                  )
+                  /*   Icon(Icons.keyboard_double_arrow_left,
+                          size: 33.0, color: blackColor) */
+                  ),
               SizedBox(
                 width: 8,
               ),
               Text(
                 "Mes Favoris",
                 style: TextStyle(
-                  fontFamily: 'Roboto',
                   fontSize: 24.0,
                   color: blackColor,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ]),
@@ -69,12 +67,20 @@ class _FavoritePageState extends State<FavoritePage> {
                     margin: EdgeInsets.only(top: 40.0, bottom: 50),
                     // padding: EdgeInsets.only(top: 5.0),
                     child: Text("Pas d'éléments dans ce dossier"))
-                : Container(
-                    margin: EdgeInsets.only(bottom: 50),
-                    // padding: EdgeInsets.only(top: 5.0),
-                    child: loadChild(
-                        favController, 'fav', 'world', '', Axis.vertical, true),
-                  ),
+                : Obx(() {
+                    return Container(
+                        margin: EdgeInsets.only(bottom: 50),
+                        // padding: EdgeInsets.only(top: 5.0),
+                        child: loadChild(
+                            controller: favController,
+                            isLoading: false,
+                            cType: "fav",
+                            sectionType: 'world',
+                            title: "",
+                            articles: favController.articlesList,
+                            axe: Axis.vertical,
+                            loadingAll: true));
+                  }),
           ),
         ],
       ),

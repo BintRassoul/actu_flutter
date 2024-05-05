@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
-import 'package:my_actu/models/top_headlines.dart';
+import 'package:my_actu/models/news_data_io_model.dart';
 
 class FavoritesController extends GetxController {
   var articlesList = [].obs;
+  var articlesTopList = [].obs;
   RxString query = ''.obs;
 
   @override
@@ -14,17 +17,26 @@ class FavoritesController extends GetxController {
 
   void getData() {
     dynamic favKeys = storage.getKeys();
-
-    var listFav = [];
+    List<Result> listFav = [];
     if (favKeys != null) {
-      for (String i in favKeys) {
-        print(storage.read(i).toString());
+      log('SOME FAVS');
 
-        final map = storage.read(i);
-        listFav.add(Article.fromJson(map));
+      for (String i in favKeys) {
+        // log('storage.read ::::' + storage.read(i).toString());
+
+        final Map<String, dynamic> map = storage.read(i);
+        Result article = Result.fromJson(map);
+        // article.imageFile = await getFile(article.title);
+
+        listFav.add(article);
       }
+      listFav.sort((a, b) => b.saveAt!.compareTo(a.saveAt!));
+
       this.articlesList.value = listFav;
+      this.articlesTopList.value =
+          (listFav.length < 6) ? listFav : listFav.sublist(0, 5);
       update();
-    }
+    } else
+      log('NOTHING IN FAV');
   }
 }

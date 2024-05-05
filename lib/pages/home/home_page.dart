@@ -1,8 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
 import 'package:my_actu/pages/home/widgets/app_bar.dart';
+import 'package:my_actu/pages/home/widgets/no_internet_lottie.dart';
 import 'package:my_actu/pages/home/widgets/row_title.dart';
+import 'package:my_actu/pages/home/widgets/try_btn.dart';
+import 'package:my_actu/routes/app_routes.dart';
 import 'package:my_actu/widgets/item_actu.dart';
 import 'package:my_actu/widgets/section_page.dart';
 
@@ -10,10 +15,17 @@ import '../favorites/favorites_controller.dart';
 import '../top_headlines/top_headlines_controller.dart';
 import 'home_controller.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final TopHeadLinesController topheadlinesController =
       Get.put(TopHeadLinesController());
+
   final FavoritesController favController = Get.put(FavoritesController());
+
   final HomeController homeController = Get.put(HomeController());
 
   @override
@@ -49,13 +61,27 @@ class HomePage extends StatelessWidget {
        */
       body: RefreshIndicator(
         onRefresh: () async {
-          topheadlinesController.onInit();
-          topheadlinesController.update();
-          return Future.value(true);
+          // setState(() async {
+          favController.onInit();
+          topheadlinesController.checkConnection();
+          if (!topheadlinesController.hasInternet.value) {
+            topheadlinesController.checkingInternet(false);
+            log('checkingInternet3 ' +
+                topheadlinesController.checkingInternet.value.toString());
+
+            topheadlinesController.update();
+          }
+          Navigator.pushReplacementNamed(context, AppRoutes.HOME);
+          //  homeController.checkConnection();
+          //return Future.value(true);
+          // });
         },
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
+              //-------------------APP BAR-------------
+
               appBarWidget(),
               //-------------------FAVORITES NEWS-------------
 
@@ -64,50 +90,106 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   children: [
                     rowTitle(title: 'Mes Favoris', goTo: "FAVORITES"),
-                    Container(
-                        padding: EdgeInsets.only(top: 5.0),
-                        //color: Colors.amber,
-                        height:
-                            favController.articlesList.length != 0 ? 235 : 100,
-                        child: (favController.articlesList.length != 0)
-                            ? ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: favController.articlesList.length,
-                                itemBuilder: (context, index) {
-                                  //   log('ELEMENT : ${topheadlinesController.articlesList[index]} &&&&&&&  ${topheadlinesController.articlesList[index].title}');
-                                  print(favController.articlesList.length);
-                                  return ActuItem(
-                                    widthCard: widthHomeCard,
-                                    sizeTitle: sizeHomeTitle,
-                                    sizeLink: sizeHomeLink,
-                                    article: favController.articlesList[index],
-                                  );
-                                })
-                            : Center(
+                    Obx(() {
+                      return (favController.articlesTopList.length != 0)
+                          ? Container(
+                              padding: EdgeInsets.only(top: 5.0),
+                              //color: Colors.amber,
+                              width: width,
+                              height: 235,
+                              child: loadChild(
+                                  controller: favController,
+                                  isLoading: false,
+                                  cType: "fav",
+                                  sectionType: 'world',
+                                  title: "",
+                                  articles: favController.articlesTopList,
+                                  axe: Axis.horizontal,
+                                  loadingAll:
+                                      favController.articlesList.length < 6
+                                          ? true
+                                          : false)
+                              /*   ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount:
+                                          favController.articlesTopList.length,
+                                      itemBuilder: (context, index) {
+                                        //   log('ELEMENT : ${topheadlinesController.articlesList[index]} &&&&&&&  ${topheadlinesController.articlesList[index].title}');
+                                        print(
+                                            favController.articlesList.length);
+                                        return ActuItem(
+                                          widthCard: widthHomeCard,
+                                          sizeTitle: sizeHomeTitle,
+                                          sizeLink: sizeHomeLink,
+                                          article:
+                                              favController.articlesList[index],
+                                        );
+                                      }) */
+                              )
+                          : Container(
+                              padding: EdgeInsets.only(top: 5.0),
+                              //color: Colors.amber,
+                              height: 100,
+                              child: Center(
                                 child: Text("Pas d'éléments dans ce dossier"),
-                              )),
+                              ));
+                    }),
+
+                    //-------------------TOPHEADLINES NEWS-------------
+
+                    Obx(() {
+                      bool isLoading = topheadlinesController.isLoading.value;
+                      return (topheadlinesController.checkingInternet.value)
+                          ? Column(
+                              children: [
+                                sectionPage(
+                                    sectionType: 'world',
+                                    title: "L'actualité dans le monde",
+                                    country: 'world',
+                                    axe: Axis.horizontal,
+                                    isLoading: isLoading),
+                                sectionPage(
+                                    sectionType: 'europe',
+                                    title: "En Europe",
+                                    country: 'fr',
+                                    axe: Axis.horizontal,
+                                    isLoading: isLoading),
+                                sectionPage(
+                                    sectionType: 'afrique',
+                                    title: "En Afrique",
+                                    country: 'sa',
+                                    axe: Axis.horizontal,
+                                    isLoading: isLoading),
+                                sectionPage(
+                                    sectionType: 'amerique',
+                                    title: "En Amérique",
+                                    country: 'us',
+                                    axe: Axis.horizontal,
+                                    isLoading: isLoading),
+                                sectionPage(
+                                    sectionType: 'asie',
+                                    title: "En Asie",
+                                    country: 'cn',
+                                    axe: Axis.horizontal,
+                                    isLoading: isLoading),
+                              ],
+                            )
+                          : /* GestureDetector(
+                              onTap: () {
+                                homeController.checkConnection();
+                              },
+                              child: tryButton(
+                                topheadlinesController,
+                              ),
+                            ); */
+                          noInternetSection();
+                    }),
+                    SizedBox(
+                      height: 50,
+                    )
                   ],
                 ),
-              ),
-
-              //-------------------TOPHEADLINES NEWS-------------
-              sectionPage(topheadlinesController, 'world',
-                  "L'actualité dans le monde", Axis.horizontal),
-
-              (homeController.hasInternet.value)
-                  ? Column(
-                      children: [
-                        sectionPage(topheadlinesController, 'europe',
-                            'En Europe', Axis.horizontal),
-                        sectionPage(topheadlinesController, 'afrique',
-                            'En Afrique', Axis.horizontal),
-                        sectionPage(topheadlinesController, 'amerique',
-                            'En Amérique', Axis.horizontal),
-                        sectionPage(topheadlinesController, 'asie', 'En Asie',
-                            Axis.horizontal)
-                      ],
-                    )
-                  : SizedBox.shrink(),
+              )
             ],
           ),
         ),

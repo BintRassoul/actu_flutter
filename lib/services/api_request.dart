@@ -1,9 +1,9 @@
-import 'dart:io';
+import 'dart:developer';
 
-import 'package:dio/dio.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
-import '../models/top_headlines.dart';
+import '../models/news_data_io_model.dart';
 
 class ApiRequest {
   final String url;
@@ -14,48 +14,42 @@ class ApiRequest {
     required this.url,
   });
 
-  Dio _dio() {
-    // Put your authorization token here
-    return Dio(BaseOptions(headers: {
-      'Authorization': 'B ....',
-    }));
-  }
+  static Future<NewsDataIo?> fetchAlbum(
+      String uri, Map<String, String>? headers) async {
+    //late List<Result> articles;
+    final response = await http.get(Uri.parse(uri), headers: headers);
 
-  Future<List<Article>> getData() async {
-    try {
-      var response = await _dio().get(this.url, queryParameters: this.data);
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      log("Connection to API is quite!!!");
+      String json = response.body;
 
-      print(response.data.toString());
-      return TopHeadLines.fromJson(response.data).articles;
-    } on DioError catch (e) {
-      print(e.toString());
-      rethrow;
+      log("---length of articles--- : " +
+          newsDataIoFromJson(json).results.length.toString());
+      log(json);
+      NewsDataIo articles = newsDataIoFromJson(json);
+      log("---length of articles--- : " + articles.results.length.toString());
+
+      /*  List<Article> articlesWithImages = [];
+        articles.forEach(
+          (item) {
+            if (item.urlToImage != '') articlesWithImages.add(item);
+          },
+        );
+        log("---length of articlesWithImages--- : " +
+            articlesWithImages.length.toString());
+        // log(articlesWithImages.toString());
+ */
+      return articles;
+    } else if (response.statusCode == 401) {
+      throw Exception('401: Unauthorized access!!');
+      // log('401: Unauthorized access!!');
+    } else if (response.statusCode == 404) {
+      throw Exception('404 : not connected');
+//log('404 : not connected');
     }
-  }
-
-  Future<File> getImage(String filename) async {
-    PermissionStatus _permissionStatus = await Permission.storage.status;
-    if (_permissionStatus != PermissionStatus.granted) {
-      PermissionStatus permissionStatus = await Permission.storage.request();
-      _permissionStatus = permissionStatus;
-    }
-
-    try {
-      var response = await _dio().get<List<int>>(this.url,
-          queryParameters: this.data,
-          options: Options(responseType: ResponseType.bytes));
-
-      print(response.data.toString());
-
-      final File file = File(filename);
-      if (_permissionStatus == PermissionStatus.granted) {
-        file.writeAsBytesSync(response.data!);
-      }
-
-      return file;
-    } on DioError catch (e) {
-      print(e.toString());
-      rethrow;
-    }
+    // log('Exception/ Stack : ' + e.toString());
+    return null;
   }
 }

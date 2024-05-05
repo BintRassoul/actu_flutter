@@ -1,8 +1,8 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../home/home_page.dart';
 
@@ -11,35 +11,41 @@ class LogoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.light,
+    ));
     return AnimatedSplashScreen(
-        duration: 4000,
+        duration: 3000,
         splash: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Align(
-                alignment: Alignment.topCenter,
-                child: Image.asset(
-                  'assets/images/worldwide.png',
-                  width: 200,
-                  height: 200,
-                )),
+            Image.asset(
+              'assets/images/worldwide.png',
+              width: .27 * width,
+              height: .13 * height,
+              //fit: BoxFit.cover,
+            ),
             SizedBox(
-              height: 25,
+              height: 15,
             ),
             Expanded(
-              child: const Text(
+              child: Text(
                 'TopActu',
                 style: TextStyle(
                     fontSize: 40,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.normal,
                     fontFamily: "Bruno Ace",
-                    color: Colors.white),
+                    color: whiteColor),
               ),
             )
           ],
         ),
-        splashIconSize: 200,
+        splashIconSize: 300,
         nextScreen: HomePage(),
-        splashTransition: SplashTransition.slideTransition,
+        splashTransition: SplashTransition.fadeTransition,
         backgroundColor: mainHexColor);
   }
 }

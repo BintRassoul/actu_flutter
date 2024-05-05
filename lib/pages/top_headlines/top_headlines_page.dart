@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
+import 'package:my_actu/pages/home/widgets/no_internet_lottie.dart';
 import 'package:my_actu/widgets/section_page.dart';
 
 import '../../widgets/utils.dart';
@@ -11,6 +12,7 @@ import 'top_headlines_controller.dart';
 class TopHeadLinesPage extends StatelessWidget {
   final TopHeadLinesController topheadlinesController =
       Get.find<TopHeadLinesController>();
+  final controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +79,7 @@ class TopHeadLinesPage extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(30))),
-                              primary:
+                              backgroundColor:
                                   topheadlinesController.categories[index] ==
                                           topheadlinesController.ctg.value
                                       ? topheadlinesController.color1.value
@@ -86,11 +88,14 @@ class TopHeadLinesPage extends StatelessWidget {
                             ),
                             onPressed: () {
                               topheadlinesController.isLoading.value = true;
-
+                              topheadlinesController.ctg.value =
+                                  topheadlinesController.categories[index];
                               topheadlinesController.getArticles(
-                                  sType,
-                                  topheadlinesController.categories[index],
-                                  true);
+                                  sType: sType,
+                                  category:
+                                      topheadlinesController.categories[index],
+                                  country: "",
+                                  loadingAll: true);
                             },
                             child: Center(
                                 child: Text(
@@ -111,10 +116,17 @@ class TopHeadLinesPage extends StatelessWidget {
                 //height: 900.0,
                 child: Obx(() {
                   if (topheadlinesController.hasInternet.value) {
-                    return loadChild(topheadlinesController, 'top', sType, '',
-                        Axis.vertical, true);
+                    return loadChild(
+                        controller: topheadlinesController,
+                        isLoading: topheadlinesController.isLoading.value,
+                        articles: topHeadLinesController.articlesList.toList(),
+                        cType: "top",
+                        sectionType: sType,
+                        title: title,
+                        axe: Axis.vertical,
+                        loadingAll: true);
                   }
-                  return noIternet();
+                  return lottieElements();
                 }),
               ),
             ),

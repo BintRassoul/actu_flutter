@@ -1,25 +1,31 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:my_actu/constants/app_constants.dart';
 
+import '../../models/news_data_io_model.dart';
 import '../../services/api_request.dart';
+import '../../services/config_reader.dart';
 
 class TopHeadLinesController extends GetxController {
-  var articlesList = [].obs;
-  var europeArticlesList = [].obs;
-  var afriqueArticlesList = [].obs;
-  var ameriqueArticlesList = [].obs;
-  var asieArticlesList = [].obs;
-  var articlesTopList = [].obs;
-  var europeArticlesTopList = [].obs;
-  var ameriqueArticlesTopList = [].obs;
-  var afriqueArticlesTopList = [].obs;
-  var asieArticlesTopList = [].obs;
+  RxList<Result> articlesList = RxList();
+  RxList<Result> europeArticlesList = RxList();
+  RxList<Result> afriqueArticlesList = RxList();
+  RxList<Result> ameriqueArticlesList = RxList();
+  RxList<Result> asieArticlesList = RxList();
+  RxList<Result> articlesTopList = RxList();
+  RxList<Result> europeArticlesTopList = RxList();
+  RxList<Result> ameriqueArticlesTopList = RxList();
+  RxList<Result> afriqueArticlesTopList = RxList();
+  RxList<Result> asieArticlesTopList = RxList();
   var isLoading = true.obs;
-
+  RxBool hasMore = RxBool(true);
+  final scrollController = ScrollController();
+  RxString nextPage = RxString("");
   RxString query = ''.obs;
   RxString place = 'general'.obs;
   RxString ctg = 'general'.obs;
@@ -33,18 +39,27 @@ class TopHeadLinesController extends GetxController {
   final ameriqueCountries =
       countriesList['amerique']?.keys.toList(growable: false);
   final asieCountries = countriesList['asie']?.keys.toList(growable: false);
+  RxBool checkingInternet = false.obs;
 
   RxBool hasInternet = false.obs;
   late StreamSubscription internetSubscription;
 
   @override
   void onInit() {
-    this.internetSubscription =
-        InternetConnectionChecker().onStatusChange.listen((status) {
-      final hasInternet = status == InternetConnectionStatus.connected;
-      this.hasInternet.value = hasInternet;
+    checkConnection();
+    // fetchArticles('general');
+    log('----------------fetch articles');
+    log('----------------isLoading topheadlines----' +
+        isLoading.value.toString());
+    scrollController.addListener(() {
+      if (scrollController.position.maxScrollExtent == scrollController.offset)
+        getArticles(
+            sType: 'world',
+            category: "world",
+            country: "",
+            loadingAll: true,
+            loadMore: true);
     });
-    fetchArticles('general');
     super.onInit();
   }
 //-------------------------------------------------------
@@ -53,86 +68,174 @@ class TopHeadLinesController extends GetxController {
   void onClose() {
     internetSubscription.cancel();
     print('---------CLOSE-connection-------');
+    scrollController.dispose();
   }
 //-------------------------------------------------------
 
   void fetchArticles(String category) async {
-    getArticles('world', category, false);
-    getArticles('afrique', 'Egypte', false);
-    getArticles('amerique', 'USA', false);
-    getArticles('europe', 'France', false);
-    getArticles('asie', 'Arabie Saoudite', false);
+    getArticles(
+        sType: 'world', category: category, country: "", loadingAll: false);
+    getArticles(
+        sType: 'europe', category: "", country: "fr", loadingAll: false);
+    getArticles(
+        sType: 'afrique', category: "", country: "sa", loadingAll: false);
+    getArticles(
+        sType: 'amerique', category: "", country: "us", loadingAll: false);
+    getArticles(sType: 'asie', category: "", country: "cn", loadingAll: false);
   }
 
 //-------------------------------------------------------
-  void getArticles(String sType, String category, bool loadingAll) async {
-    ctg.value = category;
-    var articles;
-    if (sType == 'world') {
-      if (category == 'technologie') {
-        category = 'technology';
-      } else if (category == 'sante') {
-        category = 'health';
-      }
-      articles = await ApiRequest(null,
-              url:
-                  'https://newsapi.org/v2/top-headlines?category=$category&language=fr&apiKey=$API_KEY')
-          .getData();
-    } else {
-      category = countriesList[sType]?[category] ?? '';
+  void checkConnection() {
+    this.internetSubscription =
+        InternetConnectionChecker().onStatusChange.listen((status) {
+      final isThereConnection = status == InternetConnectionStatus.connected;
+      log('status ' + status.toString());
+      log('InternetConnectionStatus.connected ' +
+          InternetConnectionStatus.connected.toString());
+      log('isThereConnection' + isThereConnection.toString());
 
-      articles = await ApiRequest(null,
-              url:
-                  'https://newsapi.org/v2/top-headlines?country=$category&category=general&apiKey=$API_KEY')
-          .getData();
+      this.hasInternet.value = isThereConnection;
+      //log('hasInternet' + hasInternet.value.toString());
+      if (hasInternet.value) {
+        //This boolean "checkingInternet" allows us to update our state when connection is OK and keep it even connection is lost
+        //Unless the page is refresh
+        this.checkingInternet(true);
+        update();
+        // this.checkingInternet.update((value) => value = true);
+        log('checkingInternet1 ' + checkingInternet.value.toString());
+
+        /*   if (articlesList.length == 0 || articlesTopList.length == 0)
+          fetchArticles('general'); */
+      } /* else {
+        this.checkingInternet(false);
+        update();
+        //  this.checkingInternet.update((value) => value = false);
+        log('checkingInternet2 ' + checkingInternet.value.toString());
+      } */
+      //  isLoading(false);
+
+      update();
+    });
+  }
+
+//-------------------------------------------------------
+  //Future<List<Result>?> getArticles(
+  Future getArticles(
+      {required String sType,
+      required String country,
+      required String category,
+      required bool loadingAll,
+      bool loadMore = false}) async {
+    ctg.value = category;
+    late List<Result>? articles;
+    late NewsDataIo? news;
+    String apiKey = ConfigReader.getApiKey();
+
+    //Make sure that we take one request at a time
+    /* if (isLoading.value) return;
+    isLoading(true);
+ */
+    if (sType == 'world') {
+      if (loadMore) {
+        news = await ApiRequest.fetchAlbum(
+            "https://newsdata.io/api/1/news?apikey=$apiKey&category=$category&language=en&page=${nextPage.value}",
+            null);
+        articles = news?.results;
+        nextPage.value = news!.nextPage;
+        update();
+      } else {
+        news = await ApiRequest.fetchAlbum(
+            "https://newsdata.io/api/1/news?apikey=$apiKey&category=$category&language=en",
+            null);
+        articles = news?.results;
+        nextPage.value = news!.nextPage;
+        update();
+      }
+    } else {
+      news = await ApiRequest.fetchAlbum(
+          "https://newsdata.io/api/1/news?apikey=$apiKey&country=$country",
+          null);
+      articles =
+          news?.results.where((element) => element.imageUrl != "").toList();
+      if (articles!.length <= 5)
+        getArticles(
+            sType: sType,
+            category: category,
+            country: country,
+            loadingAll: loadingAll,
+            loadMore: loadMore);
     }
     if (articles != null) {
       isLoading(false);
       switch (sType) {
         case 'world':
-          articlesList.value = articles;
-          if (!loadingAll) {
-            for (int i = 0; i < 5; i++) {
-              articlesTopList.add(articles[i]);
-            }
+          if (articlesList.length < news!.totalResults) {
+            if (articlesList.length == 10 &&
+                articlesList.first == articles.first)
+              articlesList.value = articles;
+            else
+              articlesList.addAll(articles.map<Result>((e) => e).toList());
+          } else
+            // This boolean indicates whether the list of items is completed or not;
+            hasMore(false);
+
+          if (articlesTopList.length != 0) articlesTopList.clear();
+          for (int i = 0; i < 5; i++) {
+            articlesTopList.add(articles[i]);
           }
-          break;
+          update();
+
+          return loadingAll ? articlesList : articlesTopList.toList();
+        //break;
         case 'afrique':
           afriqueArticlesList.value = articles;
-          if (!loadingAll) {
-            for (int i = 0; i < 5; i++) {
-              afriqueArticlesTopList.add(articles[i]);
-            }
+          if (afriqueArticlesTopList.length != 0)
+            afriqueArticlesTopList.clear();
+
+          for (int i = 0; i < 5; i++) {
+            afriqueArticlesTopList.add(articles[i]);
           }
-          break;
+          update();
+
+          return loadingAll ? articles : afriqueArticlesTopList.toList();
+
         case 'amerique':
           ameriqueArticlesList.value = articles;
-          if (!loadingAll) {
-            for (int i = 0; i < 5; i++) {
-              ameriqueArticlesTopList.add(articles[i]);
-            }
+          if (ameriqueArticlesTopList.length != 0)
+            ameriqueArticlesTopList.clear();
+
+          for (int i = 0; i < 5; i++) {
+            ameriqueArticlesTopList.add(articles[i]);
           }
-          break;
+          update();
+
+          return loadingAll ? articles : ameriqueArticlesTopList.toList();
+
         case 'europe':
           europeArticlesList.value = articles;
-          if (!loadingAll) {
-            for (int i = 0; i < 5; i++) {
-              europeArticlesTopList.add(articles[i]);
-            }
+          if (europeArticlesTopList.length != 0) europeArticlesTopList.clear();
+
+          for (int i = 0; i < 5; i++) {
+            europeArticlesTopList.add(articles[i]);
           }
-          break;
+          update();
+
+          return loadingAll ? articles : europeArticlesTopList.toList();
+
         case 'asie':
           asieArticlesList.value = articles;
-          if (!loadingAll) {
-            for (int i = 0; i < 5; i++) {
-              asieArticlesTopList.add(articles[i]);
-            }
-          }
-          break;
-      }
+          if (asieArticlesTopList.length != 0) asieArticlesTopList.clear();
 
-      update();
+          for (int i = 0; i < 5; i++) {
+            asieArticlesTopList.add(articles[i]);
+          }
+          update();
+
+          return loadingAll ? articles : asieArticlesTopList.toList();
+      }
     }
+
+    return articles;
   }
 
   //---------------------------
@@ -156,4 +259,17 @@ class TopHeadLinesController extends GetxController {
     }
     return categories;
   }
+/* 
+  Future refresh() {
+    isLoading(false);
+    hasMore(true);
+    nextPage('');
+    articlesList.clear();
+    return getArticles(
+        sType: 'world',
+        category: "world",
+        country: "",
+        loadingAll: true,
+        loadMore: false);
+  } */
 }
