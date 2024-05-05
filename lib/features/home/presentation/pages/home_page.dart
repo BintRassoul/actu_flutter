@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_actu/features/commun/presentation/widgets/logo_app.dart';
+import 'package:my_actu/features/commun/presentation/widgets/logo_widget.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -27,7 +27,7 @@ class HomePage extends StatelessWidget {
               physics: AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
-                  LogoApp(),
+                  LogoWidget(),
                 ],
               ),
             ),

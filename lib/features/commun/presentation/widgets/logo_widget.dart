@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:my_actu/constants/app_constants.dart';
 import 'package:my_actu/core/theme/colors.dart';
 
-class LogoApp extends StatelessWidget {
+class LogoWidget extends StatelessWidget {
   final bool isWithDate;
-  const LogoApp({super.key, this.isWithDate = false});
+  const LogoWidget({super.key, this.isWithDate = true});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-     // color: Colors.amber,
+      // color: Colors.amber,
       width: width,
       height: 50,
       child: Stack(
@@ -38,11 +38,25 @@ class LogoApp extends StatelessWidget {
               width: 7,
               height: 7,
               decoration: ShapeDecoration(
-                  color: AppColors.darkMallow,
+                color: AppColors.darkMallow,
                 shape: OvalBorder(),
               ),
             ),
           ),
+          if (isWithDate)
+            Positioned(
+              left: 10,
+              top: 18,
+              child: Text(
+                'Lundi 12 Mars 2024',
+                style: TextStyle(
+                  color: AppColors.darkGray,
+                  fontSize: 12,
+                  fontFamily: 'ABeeZee',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            )
         ],
       ),
     );

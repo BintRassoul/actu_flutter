@@ -7,9 +7,8 @@ class AppTheme {
   AppTheme() {
     lightTheme = ThemeData(
       brightness: Brightness.light,
-      fontFamily: 'Inter',
+      fontFamily: 'Poppins',
       useMaterial3: true,
-    
     );
 //-----------------------------DARK THEME----------------------------------
     darkTheme = ThemeData(
