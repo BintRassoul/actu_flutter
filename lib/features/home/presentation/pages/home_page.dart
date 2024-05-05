@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:my_actu/features/commun/presentation/widgets/logo.dart';
-import 'package:my_actu/routes/app_routes.dart';
+import 'package:my_actu/features/commun/presentation/widgets/logo_app.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
