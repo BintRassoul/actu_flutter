@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
 
-import '../home/home_page.dart';
+import '../../features/home/presentation/pages/home_page.dart';
 
 class LogoPage extends StatelessWidget {
   //const LogoPage({ Key? key }) : super(key: key);
@@ -44,7 +44,7 @@ class LogoPage extends StatelessWidget {
           ],
         ),
         splashIconSize: 300,
-        nextScreen: HomePage(),
+        nextScreen:HomePage(),
         splashTransition: SplashTransition.fadeTransition,
         backgroundColor: mainHexColor);
   }
