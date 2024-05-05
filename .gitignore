@@ -46,7 +46,6 @@ app.*.map.json
 /android/app/release
 /android/app/google-services.json/
 
-#Config file
-/config/app_config.json
+
 # ios
 #/ios/Runner/GoogleInfo.plist

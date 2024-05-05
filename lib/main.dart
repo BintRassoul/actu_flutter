@@ -9,7 +9,7 @@ import 'routes/app_routes.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
-  await ConfigReader.initialize();
+  //await ConfigReader.initialize();
 
   runApp(MyActuApp());
 }
