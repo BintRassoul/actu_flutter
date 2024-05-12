@@ -7,7 +7,7 @@ class LogoWidget extends StatelessWidget {
   const LogoWidget({super.key, this.isWithDate = true});
 
   @override
-  Widget build(BuildContext context) {
+  Container build(BuildContext context) {
     return Container(
       // color: Colors.amber,
       width: width,
