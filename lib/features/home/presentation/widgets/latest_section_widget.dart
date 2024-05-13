@@ -1,18 +1,71 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
 import 'package:my_actu/core/theme/colors.dart';
 import 'package:my_actu/features/commun/presentation/widgets/row_title.dart';
+import 'package:my_actu/features/home/presentation/controllers/home_controller.dart';
 
 class LatestSectionWidget extends StatelessWidget {
+  final HomeController homeController = Get.find();
+  final CarouselController latestCarouselController = CarouselController();
+
   @override
   Widget build(BuildContext context) {
+    var items = [LatestItem(), LatestItem(), LatestItem()];
     return Column(
       children: [
         RowTitleSection(title: 'Quoi de neuf'),
         SizedBox(
           height: 15,
         ),
-        LatestItem(),
+        Obx(() {
+          return Column(
+            children: [
+              CarouselSlider(
+                items: items,
+                carouselController: latestCarouselController,
+                options: CarouselOptions(
+                    height: 230,
+
+                    //autoPlay: true,
+                    enlargeCenterPage: true,
+                    enableInfiniteScroll: false,
+                    viewportFraction: 1,
+                    //  aspectRatio: aspectRatio ?? 2.18,
+                    //viewportFraction: viewportFraction,
+                    onPageChanged: (index, reason) {
+                      homeController.carouselIndex.value = index;
+                    }),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                children: items.asMap().entries.map((entry) {
+                  return GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      width: 7.0,
+                      height: 7.0,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 4.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.darkMallow.withOpacity(
+                            homeController.carouselIndex.value == entry.key
+                                ? 0.9
+                                : 0.2),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              )
+            ],
+          );
+        }),
       ],
     );
   }
@@ -44,7 +97,7 @@ class LatestItem extends StatelessWidget {
         image: DecorationImage(
           image: NetworkImage(
               "https://dims.apnews.com/dims4/default/b2b9157/2147483647/strip/true/crop/3002x1689+0+156/resize/1440x810!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2Fa6%2F10%2Fad508186a74e4e6bbf0c24553614%2F5a100a9efdc14fa8a7048b66b800e48d"),
-          fit: BoxFit.fill,
+          fit: BoxFit.cover,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
@@ -86,7 +139,7 @@ class LatestItem extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  width: 15,
+                  width: 8,
                 ),
                 Expanded(
                   child: Column(

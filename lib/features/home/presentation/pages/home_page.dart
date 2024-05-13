@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_actu/features/commun/presentation/widgets/mainland_section_widget.dart';
-import 'package:my_actu/features/commun/presentation/widgets/latest_section_widget.dart';
 import 'package:my_actu/features/commun/presentation/widgets/logo_widget.dart';
+import 'package:my_actu/features/home/presentation/widgets/latest_section_widget.dart';
+import 'package:my_actu/features/home/presentation/widgets/mainland_section_widget.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
