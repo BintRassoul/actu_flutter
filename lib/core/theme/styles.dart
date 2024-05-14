@@ -55,4 +55,27 @@ class AppStyle {
         //     color: color,
         fontStyle: FontStyle.normal,
       );
+
+        TextStyle selectedLabelStyle({
+    double size = 13,
+    Color color = AppColors.darkMallow,
+    FontWeight fontWeight = FontWeight.w500,
+  }) =>
+      TextStyle(
+        fontFamily: "Inter",
+        fontSize: size,
+        fontWeight: fontWeight,
+        color: color,
+      );
+  TextStyle unselectedLabelStyle({
+    double size = 13,
+    Color color = AppColors.darkGray,
+    FontWeight fontWeight = FontWeight.w500,
+  }) =>
+      TextStyle(
+        fontFamily: "Inter",
+        fontSize: size,
+        fontWeight: fontWeight,
+        color: color,
+      );
 }

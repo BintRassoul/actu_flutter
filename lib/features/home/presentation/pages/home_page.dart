@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_actu/features/commun/presentation/widgets/bottom_navbar.dart';
 import 'package:my_actu/features/commun/presentation/widgets/logo_widget.dart';
 import 'package:my_actu/features/home/presentation/widgets/latest_section_widget.dart';
 import 'package:my_actu/features/home/presentation/widgets/mainland_section_widget.dart';
@@ -13,7 +14,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       key: scaffoldKey,
-      //   bottomNavigationBar: bottomNavBar(),
+         bottomNavigationBar: BottomNavBar(),
       // appBar: appBar(title: 'Chèques', key: scaffoldKey),
       // drawer: navigDrawer(),
       body: Padding(
