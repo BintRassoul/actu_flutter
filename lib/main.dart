@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_actu/features/commun/presentation/bindings/all_bindings.dart';
-import 'package:my_actu/routes/app_pages.dart';
+import 'package:my_actu/routes/app_routes.dart';
 
-import 'routes/app_routes.dart';
+import 'routes/app_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -6,8 +6,10 @@ import 'package:my_actu/features/commun/presentation/widgets/row_title.dart';
 
 class MainlandSectionWidget extends StatelessWidget {
   final String title;
+  final String route;
 
-  const MainlandSectionWidget({super.key, required this.title});
+  const MainlandSectionWidget(
+      {super.key, required this.title, required this.route});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,10 @@ class MainlandSectionWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RowTitleSection(title: title),
+        RowTitleSection(
+          title: title,
+          route: route,
+        ),
         SizedBox(
           height: 15,
         ),
@@ -27,7 +32,15 @@ class MainlandSectionWidget extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: EdgeInsets.only(right: 10.0),
-                  child: MainlandItem(widthContainer: widthContainer),
+                  child: MainlandItem(
+                    widthContainer: widthContainer,
+                    heightContainer: 180,
+                    heightImageInPercent: .6,
+                    titleSize: 10,
+                    subTitleSize: 8,
+                    heightSpace: 30,
+                    isDayDisplayed: false,
+                  ),
                 );
               }),
         ),
@@ -37,18 +50,31 @@ class MainlandSectionWidget extends StatelessWidget {
 }
 
 class MainlandItem extends StatelessWidget {
-  const MainlandItem({
-    super.key,
-    required this.widthContainer,
-  });
+  const MainlandItem(
+      {super.key,
+      required this.widthContainer,
+      required this.heightContainer,
+      required this.heightImageInPercent,
+      required this.titleSize,
+      required this.subTitleSize,
+      required this.heightSpace,
+      required this.isDayDisplayed});
 
   final double widthContainer;
+  final double heightContainer;
+  final double heightImageInPercent;
+  final double titleSize;
+  final double subTitleSize;
+  final double heightSpace;
+  final bool isDayDisplayed;
 
   @override
   Widget build(BuildContext context) {
+    final double iconSize = isDayDisplayed ? 40 : 24;
+
     return Container(
       width: widthContainer,
-      height: 180,
+      height: heightContainer,
       // padding: EdgeInsets.all(15),
       alignment: Alignment.bottomLeft,
       decoration: ShapeDecoration(
@@ -62,15 +88,15 @@ class MainlandItem extends StatelessWidget {
           Positioned(
               top: 0,
               left: 0,
+              right: 0,
               child: //Image.network(
                   Container(
                       width: widthContainer,
-                      height: 180 * .6,
+                      height: heightContainer * heightImageInPercent,
                       decoration: ShapeDecoration(
                         image: DecorationImage(
                           image: NetworkImage(
-                            "https://s.france24.com/media/display/404b6be0-06cc-11ef-98d4-005056a97e36/w:980/p:16x9/AP24076834131919.webp",
-                          ),
+                              "https://dims.apnews.com/dims4/default/2f1313b/2147483647/strip/true/crop/6885x3873+0+359/resize/1440x810!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2F96%2F59%2F48b57bf6c7d6e13c68ca7a770daa%2F082edbab333345878e61058d778622eb"),
                           fit: BoxFit.cover,
                         ),
                         shape: RoundedRectangleBorder(
@@ -84,7 +110,7 @@ class MainlandItem extends StatelessWidget {
                       )),
           Positioned(
             left: 0,
-            bottom: 30,
+            bottom: heightSpace,
             right: 0,
             child: Padding(
               padding: const EdgeInsets.all(7.0),
@@ -94,7 +120,7 @@ class MainlandItem extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: AppColors.black,
-                  fontSize: 10,
+                  fontSize: titleSize, // 10,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.bold,
                 ),
@@ -105,8 +131,8 @@ class MainlandItem extends StatelessWidget {
               right: 5,
               top: 10,
               child: Container(
-                width: 24,
-                height: 24,
+                width: iconSize,
+                height: iconSize,
                 child: FloatingActionButton.small(
                   heroTag: null,
                   onPressed: () {},
@@ -114,8 +140,8 @@ class MainlandItem extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
                   child: SvgPicture.asset('assets/icons/svg/bookmark.svg',
-                      width: 12,
-                      height: 12,
+                      width: iconSize / 2,
+                      height: iconSize / 2,
                       colorFilter:
                           ColorFilter.mode(AppColors.mallow, BlendMode.srcIn),
                       semanticsLabel: 'A red up arrow'),
@@ -164,7 +190,7 @@ class MainlandItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               color: AppColors.black,
-                              fontSize: 8,
+                              fontSize: subTitleSize, // 8,
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w500,
                               height: 1),
@@ -178,7 +204,7 @@ class MainlandItem extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: AppColors.black,
-                            fontSize: 8,
+                            fontSize: subTitleSize, // 8,
                             fontFamily: 'ABeeZee',
                             fontWeight: FontWeight.w400,
                           ),
@@ -190,6 +216,20 @@ class MainlandItem extends StatelessWidget {
               ),
             ),
           ),
+          if (isDayDisplayed)
+            Positioned(
+              bottom: 12,
+              right: 0,
+              child: Text(
+                '12 Dec 2024—10h:18',
+                style: TextStyle(
+                  color: AppColors.darkGray,
+                  fontSize: 10,
+                  fontFamily: 'ABeeZee',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            )
         ],
       ),
     );

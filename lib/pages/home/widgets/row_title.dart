@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constants/app_constants.dart';
-import '../../../routes/app_routes.dart';
+import '../../../routes/app_router.dart';
 
 Widget rowTitle(
     {required String title, required String goTo, String? sectionType}) {

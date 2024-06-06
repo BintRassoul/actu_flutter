@@ -6,9 +6,7 @@ import 'package:my_actu/constants/app_constants.dart';
 import 'package:my_actu/pages/home/widgets/app_bar.dart';
 import 'package:my_actu/pages/home/widgets/no_internet_lottie.dart';
 import 'package:my_actu/pages/home/widgets/row_title.dart';
-import 'package:my_actu/pages/home/widgets/try_btn.dart';
-import 'package:my_actu/routes/app_routes.dart';
-import 'package:my_actu/widgets/item_actu.dart';
+import 'package:my_actu/routes/app_router.dart';
 import 'package:my_actu/widgets/section_page.dart';
 
 import '../favorites/favorites_controller.dart';

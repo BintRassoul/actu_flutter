@@ -43,7 +43,19 @@ class AppStyle {
         fontStyle: FontStyle.normal,
       );
 
-  TextStyle bigTitleTextStyle({
+  TextStyle hugeTitleTextStyle({
+    double size = 20,
+      Color color = AppColors.black,
+    FontWeight fontWeight = FontWeight.w800,
+  }) =>
+      TextStyle(
+        fontFamily: "Poppins",
+        fontSize: size,
+        fontWeight: fontWeight,
+        //     color: color,
+        fontStyle: FontStyle.normal,
+      ); 
+       TextStyle largeTitleTextStyle({
     double size = 24,
     //   Color color = AppColors.white,
     FontWeight fontWeight = FontWeight.w800,

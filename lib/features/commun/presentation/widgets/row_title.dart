@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:my_actu/core/theme/styles.dart';
+import 'package:my_actu/features/commun/presentation/widgets/display_text_button.dart';
 
 class RowTitleSection extends StatelessWidget {
   final String title;
-  const RowTitleSection({super.key, required this.title});
+  final String route;
+  const RowTitleSection({super.key, required this.title, required this.route});
 
   @override
   Row build(BuildContext context) {
@@ -14,7 +17,10 @@ class RowTitleSection extends StatelessWidget {
           title,
           style: AppStyle().titleTextStyle(),
         ),
-        Text('Voir tout', style: AppStyle().tinyLabelStyle())
+        DisplayTextButton(
+          text: 'Voir tout',
+          onTap: () => Get.toNamed(route),
+        )
       ],
     );
   }

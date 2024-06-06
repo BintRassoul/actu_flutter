@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -6,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
 import 'package:my_actu/constants/app_constants.dart';
-import 'package:my_actu/routes/app_routes.dart';
+import 'package:my_actu/routes/app_router.dart';
 
 import 'package:my_actu/models/news_data_io_model.dart';
 import 'customized_progress_indicator.dart';

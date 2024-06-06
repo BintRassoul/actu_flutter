@@ -9,7 +9,7 @@ import '../constants/app_constants.dart';
 import '../pages/components/loading_overlay.dart';
 import '../pages/favorites/favorites_controller.dart';
 import '../pages/top_headlines/top_headlines_controller.dart';
-import '../routes/app_routes.dart';
+import '../routes/app_router.dart';
 import 'customized_progress_indicator.dart';
 import 'item_actu.dart';
 

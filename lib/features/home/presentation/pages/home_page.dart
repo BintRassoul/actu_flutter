@@ -40,19 +40,19 @@ class HomePage extends StatelessWidget {
                   SizedBox(
                     height: 25,
                   ),
-                  MainlandSectionWidget(title: "En Amérique"),
+                  MainlandSectionWidget(title: "En Amérique",route: '',),
                   SizedBox(
                     height: 25,
                   ),
-                  MainlandSectionWidget(title: "En Afrique"),
+                  MainlandSectionWidget(title: "En Afrique",route: '',),
                   SizedBox(
                     height: 25,
                   ),
-                  MainlandSectionWidget(title: "En Europe"),
+                  MainlandSectionWidget(title: "En Europe",route: '',),
                   SizedBox(
                     height: 25,
                   ),
-                  MainlandSectionWidget(title: "En Asie"),
+                  MainlandSectionWidget(title: "En Asie",route: '',),
                   // Text('Signets', style: AppStyle().sectionTitleStyle())
                 ],
               ),

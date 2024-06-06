@@ -5,6 +5,7 @@ import 'package:my_actu/constants/app_constants.dart';
 import 'package:my_actu/core/theme/colors.dart';
 import 'package:my_actu/features/commun/presentation/widgets/row_title.dart';
 import 'package:my_actu/features/home/presentation/controllers/home_controller.dart';
+import 'package:my_actu/features/latest_news/presentation/route/routes.dart';
 
 class LatestSectionWidget extends StatelessWidget {
   final HomeController homeController = Get.find();
@@ -15,7 +16,7 @@ class LatestSectionWidget extends StatelessWidget {
     var items = [LatestItem(), LatestItem(), LatestItem()];
     return Column(
       children: [
-        RowTitleSection(title: 'Quoi de neuf'),
+        RowTitleSection(title: 'Quoi de neuf',route: LatestNewsRoutes.latest,),
         SizedBox(
           height: 15,
         ),
